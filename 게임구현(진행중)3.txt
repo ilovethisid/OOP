@@ -1,0 +1,362 @@
+#include <iostream>
+#include <ctime>
+#define UP 72
+#define LEFT 75
+#define RIGHT 77
+#define DOWN 80
+#define MaxMapWidth 15
+#define MaxMapLength 13
+#define MaxSpeed 3
+
+using namespace std;
+
+// 캐릭터
+class Character : public WaterBalloon
+{
+protected:
+	int x, y;                // 캐릭터의 좌표
+	bool locked = false;     // 물풍선에 갇혔는지 여부
+	int numWaterBalloon = 1; // 캐릭터가 가지고 있는 물풍선 갯수
+	int characterSpeed = 1;  // 캐릭터의 이동속도
+	int item = 0;            // 아이템 (0 : 아이템 없음, 1 : 바늘)
+public:
+	int getPlayerX()
+	{
+		return x;
+	}
+	int getPlayerY()
+	{
+		return y;
+	}
+	bool getLocked()
+	{
+		return locked;
+	}
+	int getNumWaterBalloon()
+	{
+		return numWaterBalloon;
+	}
+	int getCharacterSpeed()
+	{
+		return characterSpeed;
+	}
+	int getItem()
+	{
+		return item;
+	}
+	void setPlayerX(int playerX)
+	{
+		x = playerX;
+	}
+	void setPlayerY(int playerY)
+	{
+		y = playerY;
+	}
+	void setLocked()
+	{
+		locked = true;
+	}
+	void resetLocked()
+	{
+		locked = false;
+	}
+	void setNumWaterBalloon()
+	{
+		numWaterBalloon += 1;
+	}
+	void setCharacterSpeed()
+	{
+		if(characterSpeed < MaxSpeed)
+			characterSpeed += 1;
+	}
+	void setItem()
+	{
+		item = 1;
+	}
+	void resetItem()
+	{
+		item = 0;
+	}
+};
+
+// player1
+class Player1 : public Character
+{
+private:
+
+public:
+	Player1(int a, int b)
+	{
+		x = a;
+		y = b;
+	}
+	void movement(Map &map, char move)
+	{
+
+		switch (move)
+		{
+		case 'w':
+			if (map.getFeature(x, y - 1) == 0)
+				y -= 1;
+			break;
+		case 'a':
+			if (map.getFeature(x - 1, y) == 0)
+				x -= 1;
+			break;
+		case 's':
+			if (map.getFeature(x, y + 1) == 0)
+				y += 1;
+			break;
+		case 'd':
+			if (map.getFeature(x + 1, y) == 0)
+				x += 1;
+			break;
+		default:
+			break;
+		}
+	}
+};
+
+// player2
+class Player2 : public Character
+{
+private:
+
+public:
+	Player2(int a, int b)
+	{
+		x = a;
+		y = b;
+	}
+	void movement(Map &map, char move)
+	{
+		switch (move)
+		{
+		case UP:
+			if (map.getFeature(x, y - 1) == 0)
+				y -= 1;
+			break;
+		case LEFT:
+			if (map.getFeature(x - 1, y) == 0)
+				x -= 1;
+			break;
+		case DOWN:
+			if (map.getFeature(x, y + 1) == 0)
+				y += 1;
+			break;
+		case RIGHT:
+			if (map.getFeature(x + 1, y) == 0)
+				x += 1;
+			break;
+		default:
+			break;
+		}
+	}
+};
+
+// 물풍선
+class WaterBalloon
+{
+private:
+	int popLength; // 물풍선이 터질 때의 물줄기 길이
+public:
+	void pop(Map &map, int x, int y) // 시간이 되면 터지거나, 근처의 물풍선이 터질 때 터지는 범위 안에 있으면 같이 터진다.
+	{
+		map.setPopRange(x, y); // 그 자리에서 터진다.
+		for (int i = 1; i <= popLength; i++) // 물풍선 위쪽으로 터진다.
+		{
+			if ((x - i) >= 0 && map.getFeature(x - i, y) == 0)
+			{
+				map.setPopRange(x - i, y);
+			}
+			else if ((x - i) >= 0 && map.getFeature(x - i, y) == 1)
+			{
+				map.setPopRange(x - i, y);
+				break;
+			}
+			else
+			{
+				break;
+			}
+		}
+		for (int i = 1; i <= popLength; i++) // 물풍선 왼쪽으로 터진다.
+		{
+			if ((y - i) >= 0 && map.getFeature(x, y - i) == 0)
+			{
+				map.setPopRange(x, y - i);
+			}
+			else if ((y - i) >= 0 && map.getFeature(x, y - i) == 1)
+			{
+				map.setPopRange(x, y - i);
+				break;
+			}
+			else
+			{
+				break;
+			}
+		}
+		for (int i = 1; i <= popLength; i++) // 물풍선 아래쪽으로 터진다.
+		{
+			if ((x + i) <= MaxMapLength && map.getFeature(x + i, y) == 0)
+			{
+				map.setPopRange(x + i, y);
+			}
+			else if ((x + i) <= MaxMapLength && map.getFeature(x + i, y) == 1)
+			{
+				map.setPopRange(x + i, y);
+				break;
+			}
+			else
+			{
+				break;
+			}
+		}
+		for (int i = 1; i <= popLength; i++) // 물풍선 오른쪽으로 터진다.
+		{
+			if ((y + i) <= MaxMapWidth && map.getFeature(x, y + i) == 0)
+			{
+				map.setPopRange(x, y + i);
+			}
+			else if ((y + i) <= MaxMapWidth && map.getFeature(x, y + i) == 1)
+			{
+				map.setPopRange(x, y + i);
+				break;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+};
+
+// 맵
+class Map
+{
+protected:
+	struct waterBalloonType
+	{
+		int player; // 누구의 물풍선인지 (1 : player1, 2 : player2)
+		int wtrBln; // 물풍선 유무 (0 : 물풍선 있음, 1 : 물풍선 없음)
+	};
+	struct elements
+	{
+		int character;                         // 캐릭터 (0 : player 존재 X, 1 : player1 , 2 : player2)
+		struct waterBalloonType waterBalloon;
+		int feature;                          // 지형지물 (0 : 아무것도 없는 땅, 1 : 깨질 수 있는 블럭, 2 : 깨질 수 없는 블럭)
+		int popRange;                         // 물풍선 폭발 범위 (0 : 물풍선이 터지는 범위 X, 1 : 물풍선이 터지는 범위 O)
+		int item;                             // 아이템 (1 : 물풍선(물풍선 갯수 +1 증가), 2 : 물약(물풍선의 물줄기 길이 +1 증가), 3 : 롤러스케이트(캐릭터의 이동속도 증가), 4 : 바늘(물풍선에 갇혔을 때 사용하면 탈출))
+	};
+	struct elements gameMap[MaxMapWidth][MaxMapLength];
+public:
+	void initMap()
+	{
+		for (int i = 0; i < MaxMapLength; i++)
+		{
+			for (int j = 0; j < MaxMapWidth; j++)
+			{
+				gameMap[i][j].character = 0;
+				gameMap[i][j].waterBalloon.player = 0;
+				gameMap[i][j].waterBalloon.wtrBln = 0;
+				gameMap[i][j].popRange = 0;
+			}
+		}
+	}
+	int getCharacter(int x, int y)
+	{
+		return gameMap[x][y].character;
+	}
+	int getWhoseWaterBalloon(int x, int y)
+	{
+		return gameMap[x][y].waterBalloon.player;
+	}
+	int getWaterBalloon(int x, int y)
+	{
+		return gameMap[x][y].waterBalloon.wtrBln;
+	}
+	int getFeature(int x, int y)
+	{
+		return gameMap[x][y].feature;
+	}
+	int getPopRange(int x, int y)
+	{
+		return gameMap[x][y].popRange;
+	}
+	int getItem(int x, int y)
+	{
+		return gameMap[x][y].item;
+	}
+	void setCharacter1(int x, int y)
+	{
+		gameMap[x][y].character = 1;
+	}
+	void setCharacter2(int x, int y)
+	{
+		gameMap[x][y].character = 2;
+	}
+	void setPlayer1WaterBalloon(int x, int y) // 물풍선의 주인 변수에 player1 입력
+	{
+		gameMap[x][y].waterBalloon.player = 1;
+	}
+	void setPlayer2WaterBalloon(int x, int y) // 물풍선의 주인 변수에 player2 입력
+	{
+		gameMap[x][y].waterBalloon.player = 2;
+	}
+	void setWaterBalloon(int x, int y)
+	{
+		gameMap[x][y].waterBalloon.wtrBln = 1;
+	}
+	void setFeature0(int x, int y)
+	{
+		gameMap[x][y].feature = 0;
+	}
+	void setFeature1(int x, int y)
+	{
+		gameMap[x][y].feature = 1;
+	}
+	void setFeature2(int x, int y)
+	{
+		gameMap[x][y].feature = 2;
+	}
+	void setPopRange(int x, int y)
+	{
+		gameMap[x][y].popRange = 1;
+	}
+	void resetPopRange(int x, int y)
+	{
+		gameMap[x][y].popRange = 0;
+	}
+	void setItem(int x, int y)
+	{
+		srand((unsigned int)time(NULL));
+		gameMap[x][y].item = rand() % 4 + 1;
+	}
+};
+
+class Map1 : public Map
+{
+public:
+	void map1Setting()
+	{
+		// map1 세팅하고 싶은 대로 세팅하기
+	}
+};
+
+class Game
+{
+public:
+	void playGameMap1(Map1 &map)
+	{
+		map.initMap();                                 // map1 초기화
+		Player1 p1(1, 1);                              // player1 처음 위치 세우기
+		Player2 p2(MaxMapLength - 2, MaxMapWidth - 2); // player2 처음 위치 세우기
+
+		// player1, player2 움직임과 물풍선 놓는 등 다양한 행위
+		// ...
+	}
+};
+
+int main()
+{
+
+}
