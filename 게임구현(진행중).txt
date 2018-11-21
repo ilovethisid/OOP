@@ -1,0 +1,280 @@
+#include <iostream>
+#define UP 72
+#define LEFT 75
+#define RIGHT 77
+#define DOWN 80
+#define MaxMapWidth 15
+#define MaxMapLength 13
+
+// 캐릭터
+class Character : public WaterBalloon
+{
+protected:
+	int x, y; // 캐릭터의 좌표
+	bool locked; // 물풍선에 갇혔는지 여부
+	int numWaterBalloon; // 캐릭터가 가지고 있는 물풍선 갯수
+	int characterSpeed; // 캐릭터의 이동속도
+public:
+	int getPlayerLocationX()
+	{
+		return x;
+	}
+	int getPlayerLocationY()
+	{
+		return y;
+	}
+};
+
+// player1
+class Player1 : public Character
+{
+private:
+
+public:
+	void movement(char move)
+	{
+		Map map;
+		switch (move)
+		{
+		case 'w':
+			if (map.getFeature(x, y - 1) == 0)
+				y -= 1;
+			break;
+		case 'a':
+			if (map.getFeature(x - 1, y) == 0)
+				x -= 1;
+			break;
+		case 's':
+			if (map.getFeature(x, y + 1) == 0)
+				y += 1;
+			break;
+		case 'd':
+			if (map.getFeature(x + 1, y) == 0)
+				x += 1;
+			break;
+		default:
+			break;
+		}
+	}
+};
+
+// player2
+class Player2 : public Character
+{
+private:
+
+public:
+	void movement(char move)
+	{
+		switch (move)
+		{
+			Map map;
+		case UP:
+			if (map.getFeature(x, y - 1) == 0)
+				y -= 1;
+			break;
+		case LEFT:
+			if (map.getFeature(x - 1, y) == 0)
+				x -= 1;
+			break;
+		case DOWN:
+			if (map.getFeature(x, y + 1) == 0)
+				y += 1;
+			break;
+		case RIGHT:
+			if (map.getFeature(x + 1, y) == 0)
+				x += 1;
+			break;
+		default:
+			break;
+		}
+	}
+};
+
+// 물풍선
+class WaterBalloon
+{
+private:
+	int popLength; // 물풍선이 터질 때의 물줄기 길이
+public:
+	void pop(int x, int y) // 시간이 되면 터지거나, 근처의 물풍선이 터질 때 터지는 범위 안에 있으면 같이 터진다.
+	{
+		Map map;
+		map.setPopRange(x, y); // 그 자리에서 터진다.
+		for (int i = 1; i <= popLength; i++) // 물풍선 위쪽으로 터진다.
+		{
+			if ((x - i) >= 0 && map.getFeature(x - i, y) == 0)
+			{
+				map.setPopRange(x - i, y);
+			}
+			else if ((x - i) >= 0 && map.getFeature(x - i, y) == 1)
+			{
+				map.setPopRange(x - i, y);
+				break;
+			}
+			else
+			{
+				break;
+			}
+		}
+		for (int i = 1; i <= popLength; i++) // 물풍선 왼쪽으로 터진다.
+		{
+			if ((y - i) >= 0 && map.getFeature(x, y - i) == 0)
+			{
+				map.setPopRange(x, y - i);
+			}
+			else if ((y - i) >= 0 && map.getFeature(x, y - i) == 1)
+			{
+				map.setPopRange(x, y - i);
+				break;
+			}
+			else
+			{
+				break;
+			}
+		}
+		for (int i = 1; i <= popLength; i++) // 물풍선 아래쪽으로 터진다.
+		{
+			if ((x + i) <= MaxMapLength && map.getFeature(x + i, y) == 0)
+			{
+				map.setPopRange(x + i, y);
+			}
+			else if ((x + i) <= MaxMapLength && map.getFeature(x + i, y) == 1)
+			{
+				map.setPopRange(x + i, y);
+				break;
+			}
+			else
+			{
+				break;
+			}
+		}
+		for (int i = 1; i <= popLength; i++) // 물풍선 오른쪽으로 터진다.
+		{
+			if ((y + i) <= MaxMapWidth && map.getFeature(x, y + i) == 0)
+			{
+				map.setPopRange(x, y + i);
+			}
+			else if ((y + i) <= MaxMapWidth && map.getFeature(x, y + i) == 1)
+			{
+				map.setPopRange(x, y + i);
+				break;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+};
+
+// 깨질 수 있는 블럭
+class BreakableBlock
+{
+private:
+	int x, y; // 블럭의 좌표
+public:
+
+	int getBreakableBlockLocationX()
+	{
+		return x;
+	}
+	int getBreakableBlockLocationY()
+	{
+		return y;
+	}
+};
+
+// 깨질 수 없는 블럭
+class UnbreakableBlock
+{
+private:
+	int x, y; // 블럭의 좌표
+public:
+	int getUnbreakableBlockLocationX()
+	{
+		return x;
+	}
+	int getUnbreakableBlockLocationY()
+	{
+		return y;
+	}
+};
+
+// 아이템
+class Item
+{
+private:
+	int item; // 1 : 물풍선(물풍선 갯수 +1 증가), 2 : 물약(물풍선의 물줄기 길이 +1 증가), 3 : 바늘(물풍선에 갇혔을 때 사용하면 탈출), 4 : 롤러스케이트(캐릭터의 이동속도 증가)
+public:
+
+};
+
+// 맵
+class Map : public BreakableBlock, public UnbreakableBlock
+{
+private:
+	struct waterBalloonType
+	{
+		int player; // 누구의 물풍선인지 (1 : player1, 2 : player2)
+		int wtrBln; // 물풍선 유무 (0 : 물풍선 있음, 1 : 물풍선 없음)
+	};
+	struct elements
+	{
+		int character;                         // 캐릭터 유무 (0 : 캐릭터 존재 X, 1 : 캐릭터 존재 O)
+		struct waterBalloonType waterBalloon;
+		int feature;                          // 지형지물 (0 : 아무것도 없는 땅, 1 : 깨질 수 있는 블럭, 2 : 깨질 수 없는 블럭)
+		int popRange;                         // 물풍선 폭발 범위 (0 : 물풍선이 터지는 범위 X, 1 : 물풍선이 터지는 범위 O)
+	};
+protected:
+	struct elements gameMap[MaxMapWidth][MaxMapLength];
+public:
+	void initMap()
+	{
+		for (int i = 0; i < 15; i++)
+		{
+			for (int j = 0; j < 13; j++)
+			{
+				gameMap[i][j].feature = 0;
+			}
+		}
+	}
+	int getCharacter(int x, int y)
+	{
+		return gameMap[x][y].character;
+	}
+	int getWhoseWaterBalloon(int x, int y)
+	{
+		return gameMap[x][y].waterBalloon.player;
+	}
+	int getWaterBalloon(int x, int y)
+	{
+		return gameMap[x][y].waterBalloon.wtrBln;
+	}
+	int getFeature(int x, int y)
+	{
+		return gameMap[x][y].feature;
+	}
+	int getPopRange(int x, int y)
+	{
+		return gameMap[x][y].popRange;
+	}
+	void setPopRange(int x, int y)
+	{
+		gameMap[x][y].popRange = 1;
+	}
+};
+
+class Map1 : public Map
+{
+public:
+	void map1Setting()
+	{
+		// map1 세팅하고 싶은 대로 세팅하기
+	}
+};
+
+int main()
+{
+
+}
