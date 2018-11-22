@@ -1,130 +1,81 @@
+#include <iostream>
+#include <string.h>
+
 #include "Player.h"
 
-#define UP 72
-#define LEFT 75
-#define RIGHT 77
-#define DOWN 80
+using namespace std;
 
-int Character::getPlayerX()
+// Character
+Character::Character()
 {
-	return x;
+	this->locked = false;
+	this->needle = 0;
+	this->numWaterBalloon = 1;
+	this->walkspd = 1;
+	this->win = Window();
 }
 
-int Character::getPlayerY()
+void Character::draw()
 {
-	return y;
+	this->win.gotoxy(this->x, this->y);
+	cout << this->image;
 }
-bool Character::getLocked()
+
+void Character::erase()
 {
-	return locked;
+	this->win.gotoxy(this->x, this->y);
+	cout << ' ';
 }
-int Character::getNumWaterBalloon()
+
+void Character::move(Map* map, const char* dir)
 {
-	return numWaterBalloon;
+	if (strcmp(dir, "up") == 0)
+	{
+		if (this->y >= this->walkspd)
+		{
+			this->y -= this->walkspd;
+		}
+	}
+	else if (strcmp(dir, "down") == 0)
+	{
+		if (this->y < WINHEIGHT - this->walkspd)
+		{
+			this->y += this->walkspd;
+		}
+	}
+	else if (strcmp(dir, "left") == 0)
+	{
+		if (this->x >= this->walkspd)
+		{
+			this->x -= this->walkspd;
+		}
+	}
+	else if (strcmp(dir, "right") == 0)
+	{
+		if (this->x < WINWIDTH - this->walkspd)
+		{
+			this->x += this->walkspd;
+		}
+	}
+	else
+	{
+		// do nothing
+	}
 }
-int Character::getCharacterSpeed()
-{
-	return characterSpeed;
-}
-int Character::getItem()
-{
-	return item;
-}
-void Character::setPlayerX(int playerX)
-{
-	x = playerX;
-}
-void Character::setPlayerY(int playerY)
-{
-	y = playerY;
-}
-void Character::setLocked()
-{
-	locked = true;
-}
-void Character::resetLocked()
-{
-	locked = false;
-}
-void Character::setNumWaterBalloon()
-{
-	numWaterBalloon += 1;
-}
-void Character::setCharacterSpeed()
-{
-	if (characterSpeed < MaxSpeed)
-		characterSpeed += 1;
-}
-void Character::setItem()
-{
-	item = 1;
-}
-void Character::resetItem()
-{
-	item = 0;
-}
+
 
 // player1
-
-Player1::Player1(int a, int b)
+Player1::Player1(int x, int y)
 {
-	x = a;
-	y = b;
-}
-
-void Player1::movement(Map &map, char move)
-{
-	switch (move)
-	{
-	case 'w':
-		if (map.getFeature(x, y - 1) == 0)
-			y -= 1;
-		break;
-	case 'a':
-		if (map.getFeature(x - 1, y) == 0)
-			x -= 1;
-		break;
-	case 's':
-		if (map.getFeature(x, y + 1) == 0)
-			y += 1;
-		break;
-	case 'd':
-		if (map.getFeature(x + 1, y) == 0)
-			x += 1;
-		break;
-	default:
-		break;
-	}
+	this->x = x;
+	this->y = y;
+	this->image = 'P';
 }
 
 // player2
-Player2::Player2(int a, int b)
+Player2::Player2(int x, int y)
 {
-	x = a;
-	y = b;
-}
-	
-void Player2::movement(Map &map, char move)
-{
-	switch (move)
-	{
-	case UP:
-		if (map.getFeature(x, y - 1) == 0)
-			y -= 1;
-		break;
-	case LEFT:
-		if (map.getFeature(x - 1, y) == 0)
-			x -= 1;
-		break;
-	case DOWN:
-		if (map.getFeature(x, y + 1) == 0)
-			y += 1;
-		break;
-	case RIGHT:
-		if (map.getFeature(x + 1, y) == 0)
-			x += 1;
-		break;
-	default:
-		break;
-	}
+	this->x = x;
+	this->y = y;
+	this->image = 'S';
 }

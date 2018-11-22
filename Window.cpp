@@ -6,6 +6,12 @@
 #include <stdlib.h>
 #include <Windows.h>
 
+
+Window::Window()
+{
+	this->hideCursor();
+}
+
 Window::Window(const char* wintitle)
 {
 	char winsetting[256] = { '\0', };
@@ -22,4 +28,11 @@ void Window::gotoxy(int x, int y)
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
 
+void Window::hideCursor()
+{
+	CONSOLE_CURSOR_INFO cursorInfo = { 0, };
+	cursorInfo.dwSize = 1;
+	cursorInfo.bVisible = FALSE;
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
+}
 
