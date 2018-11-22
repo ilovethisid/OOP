@@ -9,10 +9,10 @@
 class Map
 {
 	class Tile
-		// ¸ÊÀÇ ÇÑ Å¸ÀÏ
+		// ë§µì˜ í•œ íƒ€ì¼
 	{
 	protected:
-		int x, y; // Å¸ÀÏÀÇ À§Ä¡
+		int x, y; // íƒ€ì¼ì˜ ìœ„ì¹˜
 		char* type;
 		// type: WaterBalloon, Character, Land, Block
 
@@ -25,45 +25,45 @@ class Map
 
 	// types of tiles
 
-	class WaterBalloon :Tile
+	class WaterBalloon : public Tile
 	{
 	private:
-		int player; // ¹°Ç³¼± ÁÖÀÎ
-		int duration; // ¹°Ç³¼± Áö¼Ó½Ã°£
-		int poplength; // ÅÍÁú¶§ ±æÀÌ
+		int player; // ë¬¼í’ì„  ì£¼ì¸
+		int duration; // ë¬¼í’ì„  ì§€ì†ì‹œê°„
+		int poplength; // í„°ì§ˆë•Œ ê¸¸ì´
 
 	public:
 		WaterBalloon();
 
-		void pop(); // ¹°Ç³¼±ÀÌ ÅÍÁö´Â ÇÔ¼ö
+		void pop(); // ë¬¼í’ì„ ì´ í„°ì§€ëŠ” í•¨ìˆ˜
 	};
 
-	class Character :Tile
+	class Character : public Tile
 	{
 	private:
-		int player; // ÇÃ·¡ÀÌ¾î 1 ¶Ç´Â 2
+		int player; // í”Œë˜ì´ì–´ 1 ë˜ëŠ” 2
 
 	public:
 		Character();
 	};
 
-	class Land :Tile
+	class Land : public Tile
 	{
 	public:
 		Land();
 	};
 
-	class Block :Tile
+	class Block : public Tile
 	{
 	private:
-		bool rigid; // ´Ü´ÜÇÑ ¿ÀºêÁ§Æ®ÀÎÁö(Åë°ú°¡ °¡´ÉÇÏ¸é 0, ¾Æ´Ï¸é 1)
+		bool rigid; // ë‹¨ë‹¨í•œ ì˜¤ë¸Œì íŠ¸ì¸ì§€(í†µê³¼ê°€ ê°€ëŠ¥í•˜ë©´ 0, ì•„ë‹ˆë©´ 1)
 
 	public:
 		Block();
 	};
 
-	class Needle :Tile
-		// ¹Ù´Ã
+	class Needle : public Tile
+		// ë°”ëŠ˜
 	{
 	private:
 		int tag;
@@ -73,8 +73,8 @@ class Map
 	};
 
 private:
-	Tile tile[MAPHEIGHT][MAPWIDTH]; // ¸Ê»óÀÇ Å¸ÀÏµé
-	Window win; // ÄÜ¼ÖÃ¢
+	Tile tile[MAPHEIGHT][MAPWIDTH]; // ë§µìƒì˜ íƒ€ì¼ë“¤
+	Window win; // ì½˜ì†”ì°½
 
 public:
 	Map();
