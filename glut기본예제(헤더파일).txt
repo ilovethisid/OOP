@@ -1,0 +1,16 @@
+#pragma once
+#pragma comment( linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"" )
+#include <gl/glut.h>
+#include <cstdlib>
+#include <ctime>
+#define Move 0.2
+
+// (X1,Y1) = player1의 왼쪽 위 좌표, (X2,Y2) = player1의 오른쪽 아래 좌표, (X3,Y3) = player2의 왼쪽 위 좌표, (X4,Y4) = player1의 오른쪽 아래 좌표
+float X1 = -0.1;
+float Y1 = 0.1;
+float X2 = 0.1;
+float Y2 = -0.1;
+float X3 = 0.3;
+float Y3 = 0.1;
+float X4 = 0.5;
+float Y4 = -0.1;
