@@ -3,21 +3,18 @@
 
 #include "glut.h"
 
-#define FPS 30
-#define gravity 3   // 중력
-#define jumpspeed 7 // 점프하는 순간 속력
-#define gameover 0
-
 using namespace player;
+using namespace angle;
 
-int initial_time = time(NULL);
+int initial_time = clock();
 int final_time;
 int frame_count = 0;
-int Top_angle;
-int Down_angle;
 
 int main(int argc, char** argv)
 {
+	Map Map;
+	mapsetting(Map);
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(glutGet(GLUT_SCREEN_WIDTH) / 2 - WINWIDTH / 2, glutGet(GLUT_SCREEN_HEIGHT) / 2 - WINHEIGHT / 2); // 실행되는 시작 위치
@@ -56,9 +53,24 @@ void changeSize(int w, int h)
 
 void display()
 {
+	
+	// 배경 그리기
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 버퍼 지우기
 	glColor3f(0.0f, 1.0f, 0.0f);
-	glRectf(-1.5, 1.5, 1.5, -1.5);
+	glRectf(-1, 1.4, 1, -0.6);
+	
+	// 맵 그리기
+	for (int i = 0; i < MapLength; i++)
+	{
+		for (int j = 0; j < MapWidth; j++)
+		{
+			if (MAP[i][j] == 1)
+			{
+				glColor3f(0.0f, 0.0f, 1.0f);
+				glRectf(LUcornerX+0.2*(float)j,LUcornerY-0.2*(float)i,RDcornerX+0.2*(float)j,RDcornerY-0.2*(float)i);
+			}
+		}
+	}
 
 	glClear(GL_DEPTH_BUFFER_BIT); // 깊이 버퍼 지우기
 	glColor3f(1.0f, 0.0f, 0.0f);
@@ -67,13 +79,7 @@ void display()
 	glutSwapBuffers();
 
 	frame_count++;
-	final_time = time(NULL);
-	if (final_time - initial_time > 0)
-	{
-		cout << "FPS : " << frame_count / (final_time - initial_time) << endl;
-		frame_count = 0;
-		initial_time = final_time;
-	}
+	final_time = clock();
 
 	glFlush(); // 쌓여있는 명령 지움
 }
@@ -108,21 +114,41 @@ void keyListener(int key, int x, int y)
 
 void idle(int) // 이중버퍼에 들어갈 함수
 {
-	glutPostRedisplay();
-	glutTimerFunc((1000 / FPS), idle, 0);
 	if (playerY2 < Down_angle)
 	{
-		Top_angle -= 0.05;
-		Down_angle -= 0.05;
-		glTranslatef(0.0, -0.05, 0.0);
+		Top_angle -= anglemovespeed;
+		Down_angle -= anglemovespeed;
+		glTranslatef(0.0, anglemovespeed, 0.0);
 	}
-	if (playerY1 > Top_angle)
+	else if (playerY1 > Top_angle)
 	{
-		Top_angle += 0.05;
-		Down_angle += 0.05;
-		glTranslatef(0.0, 0.05, 0.0);
+		Top_angle += anglemovespeed;
+		Down_angle += anglemovespeed;
+		glTranslatef(0.0, (-1 * anglemovespeed), 0.0);
 
 	}
-	playerY1 -= 0.05;
-	playerY2 -= 0.05;
+	else
+	{
+		// 화면 고정
+	}
+	glutPostRedisplay();
+	glutTimerFunc((1000 / FPS), idle, 0);
+}
+
+void mapsetting(Map Map)
+{
+	for (int i = 0; i < MapLength; i++)
+	{
+		for (int j = 0; j < MapWidth; j++)
+		{
+			if (Map.getXY(i, j) == 1)
+			{
+				MAP[i][j] = 1;
+			}
+			else
+			{
+				MAP[i][j] = 0;
+			}
+		}
+	}
 }

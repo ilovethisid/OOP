@@ -1,69 +1,53 @@
 #include "Map.h"
 
-Map::Map()
+void Map::setXY1(int x, int y)
 {
-
+	map[x][y] = 1;
 }
 
-Map::Map(Window win)
+Map::Map()
 {
-	this->win = win;
-
-	// initialize tiles
-	for (int i = 0; i < MAPHEIGHT; i++)
+	for (int i = 0; i < MapLength; i++)
 	{
-		for (int j = 0; j < MAPWIDTH; j++)
+		for (int j = 0; j < MapWidth; j++)
 		{
-			this->tile[i][j] = Tile(j, i);
+			if (i == 1 && j >= 0 && j <= 3)
+			{
+				setXY1(i, j);
+			}
+			else if (i == 3 && j >= 5 && j <= 8)
+			{
+				setXY1(i, j);
+			}
+			else if (i == 4 && j >= 0 && j <= 3)
+			{
+				setXY1(i, j);
+			}
+			else if (i == 5 && j >= 5 && j <= 6)
+			{
+				setXY1(i, j);
+			}
+			else if (i == 6 && j >= 8 && j <= 9)
+			{
+				setXY1(i, j);
+			}
+			else if (i == 7 && j >= 3 && j <= 4)
+			{
+				setXY1(i, j);
+			}
+			else if (i == 8 && j >= 6 && j <= 7)
+			{
+				setXY1(i, j);
+			}
+			else if (i == 9 && j >= 0 && j <= 4)
+			{
+				setXY1(i, j);
+			}
 		}
 	}
 }
 
-Map::Tile::Tile(int x, int y)
+int Map::getXY(int x, int y)
 {
-	this->x = x;
-	this->y = y;
+	return map[x][y];
 }
-
-void Map::draw()
-{
-
-}
-
-void Map::WaterBalloon::pop()
-{
-	// for duration, wait
-	// (근처의 물풍선이 터지면 같이 터진다)
-	// if duration=0, pop
-}
-
-Map::Tile::Tile()
-{
-
-}
-
-Map::Block::Block()
-{
-
-}
-
-Map::Character::Character()
-{
-
-}
-
-Map::Needle::Needle()
-{
-
-}
-
-Map::Land::Land()
-{
-
-}
-
-Map::WaterBalloon::WaterBalloon()
-{
-
-}
-
