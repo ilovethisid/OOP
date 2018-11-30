@@ -58,8 +58,6 @@ class glut
 {
 public:
 	static void mouseClick(int button, int motion, int x, int y); // 마우스 클릭 여부
-	static void mousePassiveMotion(int x, int y);                 // 마우스 클릭 안됐을 때 마우스 위치
-	static void mouseActiveMotion(int x, int y);                  // 마우스 클릭하면서 움직이는 마우스 위치
 	static void keyListener(int key, int x, int y);
 	static void changeSize(int w, int h);
 	static void idle(int);

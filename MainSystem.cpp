@@ -29,7 +29,6 @@ void glut::startFramework(int argc, char** argv)
 	glutTimerFunc((1000 / FPS), idle, 0);
 
 	glutSpecialFunc(keyListener); // 키보드 특수키 입력 처리
-	glutPassiveMotionFunc(mousePassiveMotion);
 	glutMouseFunc(mouseClick);
 	glutMainLoop();
 }
@@ -172,30 +171,6 @@ void glut::keyListener(int key, int x, int y)
 	}
 
 	glutPostRedisplay();
-}
-
-void glut::mouseActiveMotion(int x, int y)
-{
-	
-}
-
-void glut::mousePassiveMotion(int x, int y)
-{
-	/*
-	specialKey = glutGetModifiers();
-	if (x > playerX1 && x < playerX2 && y < playerY1 && y > playerY2)
-	{
-		ClickX1 = playerX1;
-		ClickY1 = playerY1;
-		ClickX2 = playerX2;
-		ClickY2 = playerY2;
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glRectf(ClickX1, ClickY1, ClickX2, ClickY2);
-	}
-	
-	glutPostRedisplay();
-	*/
-	
 }
 
 void glut::mouseClick(int button, int state, int x, int y)
