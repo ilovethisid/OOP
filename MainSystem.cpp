@@ -56,7 +56,6 @@ void glut::changeSize(int w, int h)
 
 void glut::display()
 {
-
 	// 배경 그리기
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 버퍼 지우기
 	glColor3f(0.0f, 1.0f, 0.0f);
@@ -77,7 +76,7 @@ void glut::display()
 
 	glClear(GL_DEPTH_BUFFER_BIT); // 깊이 버퍼 지우기
 	glColor3f(1.0f, 0.0f, 0.0f);
-	glRectf(playerX1, playerY1, playerX2, playerY2);
+	glRectf(objectLeftUpX, objectLeftUpY, objectRightDownX, objectRightDownY);
 
 	glutSwapBuffers();
 
@@ -88,31 +87,28 @@ void glut::idle(int) // 이중버퍼에 들어갈 함수
 {
 	if (V_jump != 0.0) // 땅에 닿았을 때 (수직 속도가 0일 때)
 	{
-		playerY1 += V_jump;
-		playerY2 += V_jump;
+		characterLocationY += V_jump;
 		V_jump -= gravity;
 	}
-	
+
 	if (V_horizon > 0.0)
 	{
-		playerX1 += V_horizon;
-		playerX2 += V_horizon;
+		characterLocationX += V_horizon;
 		//V_horizon -= friction;
 	}
 	else if (V_horizon < 0.0)
 	{
-		playerX1 += V_horizon;
-		playerX2 += V_horizon;
+		characterLocationX += V_horizon;
 		//V_horizon += friction;
 	}
-		
-	if (playerY2 < Down_angle)
+
+	if (characterLocationY < Down_angle)
 	{
 		Top_angle -= anglemovespeed;
 		Down_angle -= anglemovespeed;
 		glTranslatef(0.0, anglemovespeed, 0.0);
 	}
-	else if (playerY2 > Top_angle)
+	else if (characterLocationY > Top_angle)
 	{
 		Top_angle += anglemovespeed;
 		Down_angle += anglemovespeed;
@@ -150,24 +146,20 @@ void glut::keyListener(int key, int x, int y)
 	//키보드 방향에 따른 위치이동
 	if (GetKeyState(VK_LEFT) < 0)
 	{
-		playerX1 -= WALKSPD;
-		playerX2 -= WALKSPD;
+		characterLocationX -= WALKSPD;
 	}
 	else if (GetKeyState(VK_RIGHT) < 0)
 	{
-		playerX1 += WALKSPD;
-		playerX2 += WALKSPD;
+		characterLocationX += WALKSPD;
 	}
 
 	if (GetKeyState(VK_UP) < 0)
 	{
-		playerY1 += WALKSPD;
-		playerY2 += WALKSPD;
+		characterLocationY += WALKSPD;
 	}
 	else if (GetKeyState(VK_DOWN) < 0)
 	{
-		playerY1 -= WALKSPD;
-		playerY2 -= WALKSPD;
+		characterLocationY -= WALKSPD;
 	}
 
 	glutPostRedisplay();

@@ -20,6 +20,11 @@
 #define LUcornerY 1.4
 #define RDcornerX -0.8
 #define RDcornerY 1.2
+#define characterSize 0.2
+#define objectLeftUpX characterLocationX
+#define objectLeftUpY characterLocationY
+#define objectRightDownX characterLocationX + characterSize
+#define objectRightDownY characterLocationY - characterSize
 
 using namespace std;
 
@@ -31,11 +36,8 @@ namespace angle
 
 namespace player
 {
-	// (X1,Y1) = player1ÀÇ ¿ÞÂÊ À§ ÁÂÇ¥, (X2,Y2) = player1ÀÇ ¿À¸¥ÂÊ ¾Æ·¡ ÁÂÇ¥
-	float playerX1 = -0.1;
-	float playerY1 = 0.1;
-	float playerX2 = 0.1;
-	float playerY2 = -0.1;
+	float characterLocationX = -0.1;
+	float characterLocationY = 0.1;
 }
 
 namespace mouse
