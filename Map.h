@@ -1,14 +1,15 @@
 #pragma once
 
-#define MapWidth 10
-#define MapLength 10
+#include "Block.h"
 
-class Map
+#include <QGraphicsScene>
+
+class Map:public QGraphicsScene
 {
 private:
-	int map[MapLength][MapWidth];
-	void setXY1(int x, int y);
+
 public:
-	Map();
-	int getXY(int x, int y);
+    Map();
+
+    void addBlock();
 };

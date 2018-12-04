@@ -1,81 +1,67 @@
-#include <iostream>
-#include <string.h>
-
 #include "Player.h"
 
-using namespace std;
+#include <math.h>
 
-// Character
-Character::Character()
+Player::Player(int x,int y)
 {
-	this->locked = false;
-	this->needle = 0;
-	this->numWaterBalloon = 1;
-	this->walkspd = 1;
-	this->win = Window();
+    this->setPos(x,y);
+    this->xspd=0;
+    this->yspd=0;
 }
 
-void Character::draw()
+void Player::keyPressEvent(QKeyEvent* event)
 {
-	this->win.gotoxy(this->x, this->y);
-	cout << this->image;
+    if(event->key()==Qt::Key_W)
+    {
+        if(scene()->collidingItems(this).isEmpty())
+        {
+            this->moveUp();
+        }
+    }
+    if(event->key()==Qt::Key_A)
+    {
+        if(scene()->collidingItems(this).isEmpty())
+        {
+            this->moveLeft();
+        }
+    }
+    if(event->key()==Qt::Key_S)
+    {
+        if(scene()->collidingItems(this).isEmpty())
+        {
+            this->moveDown();
+        }
+    }
+    if(event->key()==Qt::Key_D)
+    {
+        if(scene()->collidingItems(this).isEmpty())
+        {
+            this->moveRight();
+        }
+    }
 }
 
-void Character::erase()
+void Player::moveUp()
 {
-	this->win.gotoxy(this->x, this->y);
-	cout << ' ';
+    this->setPos(this->x(),this->y()-10);
 }
 
-void Character::move(Map* map, const char* dir)
+void Player::moveDown()
 {
-	if (strcmp(dir, "up") == 0)
-	{
-		if (this->y >= this->walkspd)
-		{
-			this->y -= this->walkspd;
-		}
-	}
-	else if (strcmp(dir, "down") == 0)
-	{
-		if (this->y < WINHEIGHT - this->walkspd)
-		{
-			this->y += this->walkspd;
-		}
-	}
-	else if (strcmp(dir, "left") == 0)
-	{
-		if (this->x >= this->walkspd)
-		{
-			this->x -= this->walkspd;
-		}
-	}
-	else if (strcmp(dir, "right") == 0)
-	{
-		if (this->x < WINWIDTH - this->walkspd)
-		{
-			this->x += this->walkspd;
-		}
-	}
-	else
-	{
-		// do nothing
-	}
+    this->setPos(this->x(),this->y()+10);
+}
+
+void Player::moveLeft()
+{
+    this->setPos(this->x()-10,this->y());
+}
+
+void Player::moveRight()
+{
+
+    this->setPos(this->x()+10,this->y());
 }
 
 
-// player1
-Player1::Player1(int x, int y)
-{
-	this->x = x;
-	this->y = y;
-	this->image = 'P';
-}
 
-// player2
-Player2::Player2(int x, int y)
-{
-	this->x = x;
-	this->y = y;
-	this->image = 'S';
-}
+
