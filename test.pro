@@ -18,4 +18,5 @@ HEADERS += \
     window.h \
     Player.h \
     Block.h \
-    Map.h
+    Map.h \
+    ../../../../Qt/Tools/mingw530_32/i686-w64-mingw32/include/windows.h

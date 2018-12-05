@@ -1,67 +1,38 @@
 #include "Player.h"
 
 #include <math.h>
+#include <Windows.h>
 
 Player::Player(int x,int y)
 {
     this->setPos(x,y);
+    this->setRect(0,0,50,50);
+    this->w=50;
+    this->h=50;
     this->xspd=0;
     this->yspd=0;
 }
 
-void Player::keyPressEvent(QKeyEvent* event)
+void Player::move()
 {
-    if(event->key()==Qt::Key_W)
+    this->setPos(this->x()+this->xspd,this->y()+this->yspd);
+}
+
+void Player::applyGravity()
+{
+    this->yspd+=1;
+}
+
+void Player::applyFriction()
+{
+    if(this->xspd<0)
     {
-        if(scene()->collidingItems(this).isEmpty())
-        {
-            this->moveUp();
-        }
+        this->xspd++;
     }
-    if(event->key()==Qt::Key_A)
+    else if(this->xspd>0)
     {
-        if(scene()->collidingItems(this).isEmpty())
-        {
-            this->moveLeft();
-        }
-    }
-    if(event->key()==Qt::Key_S)
-    {
-        if(scene()->collidingItems(this).isEmpty())
-        {
-            this->moveDown();
-        }
-    }
-    if(event->key()==Qt::Key_D)
-    {
-        if(scene()->collidingItems(this).isEmpty())
-        {
-            this->moveRight();
-        }
+        this->xspd--;
     }
 }
-
-void Player::moveUp()
-{
-    this->setPos(this->x(),this->y()-10);
-}
-
-void Player::moveDown()
-{
-    this->setPos(this->x(),this->y()+10);
-}
-
-void Player::moveLeft()
-{
-    this->setPos(this->x()-10,this->y());
-}
-
-void Player::moveRight()
-{
-
-    this->setPos(this->x()+10,this->y());
-}
-
-
 
 

@@ -1,5 +1,10 @@
 #include "block.h"
 
+Block::Block()
+{
+
+}
+
 Block::Block(int x,int y,int w,int h)
 {
     this->x=x;

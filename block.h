@@ -1,17 +1,13 @@
 #pragma once
 
-#include "Pos.h"
-
 #include <QGraphicsRectItem>
 
 class Block: public QGraphicsRectItem
 {
-private:
-    int x,y;
-
 public:
+    int x,y;
     int w,h; // width and height
-    Pos center;
 
+    Block();
     Block(int x,int y,int w,int h);
 };
