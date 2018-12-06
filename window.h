@@ -15,6 +15,14 @@ class Window: public QGraphicsView
 private:
     GameTimer* timer;
     Player* player;
+    int mouseInitX;
+    int mouseInitY;
+    int mouseFinalX;
+    int mouseFinalY;
+
+    void mousePressEvent(QMouseEvent* e);
+    void mouseMoveEvent(QMouseEvent* e);
+    void mouseReleaseEvent(QMouseEvent* e);
 
 public:
     Window(Map* map,GameTimer* timer);

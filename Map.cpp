@@ -3,8 +3,6 @@
 #include <QDebug>
 #include <math.h>
 
-int sign(int x);
-
 Map::Map(GameTimer* timer)
 {
     this->player=new Player(MAPWIDTH/2,MAPHEIGHT-300);
@@ -321,22 +319,6 @@ void Map::keyPressEvent(QKeyEvent* e)
         // only for testing
         // flying
         player->yspd=-10;
-    }
-}
-
-int sign(int x)
-{
-    if(x>0)
-    {
-        return 1;
-    }
-    else if(x<0)
-    {
-        return -1;
-    }
-    else
-    {
-        return 0;
     }
 }
 

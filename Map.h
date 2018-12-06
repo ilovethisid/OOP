@@ -2,15 +2,12 @@
 
 #include "block.h"
 #include "Player.h"
-#include "Gametimer.h"
+#include "gametimer.h"
 
 #include <QGraphicsScene>
 #include <QList>
-#include <QTimer>
-#include <QObject>
 #include <QKeyEvent>
 
-#define FPS 30
 #define MAPWIDTH 1200
 #define MAPHEIGHT 1200
 
@@ -25,7 +22,6 @@ public:
 
     Map(GameTimer* timer);
 
-    void drawBackground();
     void addBlock(Block* newblock);
 
     bool checkPlayerLeftCollision();
