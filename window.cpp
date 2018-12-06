@@ -36,6 +36,7 @@ Window::Window(Map* map,GameTimer* timer) :QGraphicsView(map)
     this->map->addItem(line);
     this->projection=new QGraphicsLineItem();
     this->map->addItem(projection);
+    this->lineLength=0;
 }
 
 void Window::centerOnPlayer()
@@ -57,7 +58,7 @@ void Window::mouseMoveEvent(QMouseEvent* e)
     int length;
     int maxLength;
 
-    if(e->type()==QEvent::MouseMove && map->checkPlayerBotCollision())
+    if(e->type()==QEvent::MouseMove || map->checkPlayerBotCollision())
     {
         startX=int(mapToScene(QPoint(mouseInitX,mouseInitY)).x());
         startY=int(mapToScene(QPoint(mouseInitX,mouseInitY)).y());
@@ -70,7 +71,11 @@ void Window::mouseMoveEvent(QMouseEvent* e)
         QPen* pen=new QPen(Qt::black,5,Qt::DashLine);
         if(length<=maxLength)
         {
-            pen->setColor(QColor(int(255*double(length/double(maxLength))),100,100));
+            pen->setColor(QColor(int(255*double(length/double(maxLength))),0,100));
+        }
+        else
+        {
+            pen->setColor(Qt::red);
         }
 
         line->setPen(*pen);
@@ -81,42 +86,40 @@ void Window::mouseMoveEvent(QMouseEvent* e)
         int playerY=int(player->y()+player->h/2);
         // player center x,y
 
-        line->setLine(startX,startY,endX,endY);
-        projection->setLine(playerX,playerY,playerX+endX-startX,playerY+endY-startY);
-
         if(length>maxLength)
         {
-            line->hide();
-            projection->hide();
+            endX=startX+int((endX-startX)*double(maxLength/double(length)));
+            endY=startY+int((endY-startY)*double(maxLength/double(length)));
+            line->setLine(startX,startY,endX,endY);
+            projection->setLine(playerX,playerY,playerX+endX-startX,playerY+endY-startY);
+            line->show();
+            projection->show();
+            lineLength=maxLength;
         }
         else
         {
+            line->setLine(startX,startY,endX,endY);
+            projection->setLine(playerX,playerY,playerX+endX-startX,playerY+endY-startY);
             line->show();
             projection->show();
+            lineLength=length;
         }
     }
 }
 
 void Window::mouseReleaseEvent(QMouseEvent* e)
 {
-    if(map->checkPlayerBotCollision())
+    if(1||map->checkPlayerBotCollision())
     {
         mouseFinalX=e->pos().x();
         mouseFinalY=e->pos().y();
 
         int distX=mouseFinalX-mouseInitX;
-        int distY=mouseFinalY-mouseInitY;
-        int spdX=int(distX/5);
-        int spdY=int(distY/5);
+        int distY=(mouseFinalY-mouseInitY); // because of computer's coordinate system
+        double angle=atan2(distY,distX);
 
-        if(abs(spdX)>20)
-        {
-            spdX=sign(spdX)*20;
-        }
-        if(abs(spdY)>20)
-        {
-            spdY=sign(spdY)*20;
-        }
+        int spdX=int(player->maxspd*cos(angle));
+        int spdY=int(player->maxspd*sin(angle)); // because of computer's coordinate system
 
         this->player->xspd=spdX;
         this->player->yspd=spdY;

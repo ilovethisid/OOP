@@ -22,6 +22,7 @@ private:
     int mouseFinalY;
     QGraphicsLineItem* line;
     QGraphicsLineItem* projection;
+    int lineLength;
 
     void mousePressEvent(QMouseEvent* e);
     void mouseMoveEvent(QMouseEvent* e);

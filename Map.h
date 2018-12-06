@@ -8,8 +8,8 @@
 #include <QList>
 #include <QKeyEvent>
 
-#define MAPWIDTH 1200
-#define MAPHEIGHT 1200
+#define MAPWIDTH 2400
+#define MAPHEIGHT 2000
 
 class Map:public QGraphicsScene
 {

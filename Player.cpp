@@ -6,9 +6,9 @@
 Player::Player(int x,int y)
 {
     this->setPos(x,y);
-    this->setRect(0,0,50,50);
-    this->w=50;
-    this->h=50;
+    this->setRect(0,0,30,30);
+    this->w=30;
+    this->h=30;
     this->xspd=0;
     this->yspd=0;
     this->maxspd=20;
