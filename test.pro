@@ -11,7 +11,8 @@ SOURCES += \
     window.cpp \
     Player.cpp \
     Block.cpp \
-    Map.cpp
+    Map.cpp \
+    Gametimer.cpp
 
 HEADERS += \
     Window.h \
@@ -19,4 +20,4 @@ HEADERS += \
     Player.h \
     Block.h \
     Map.h \
-    ../../../../Qt/Tools/mingw530_32/i686-w64-mingw32/include/windows.h
+    Gametimer.h

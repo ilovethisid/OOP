@@ -13,11 +13,6 @@ Player::Player(int x,int y)
     this->yspd=0;
 }
 
-void Player::move()
-{
-    this->setPos(this->x()+this->xspd,this->y()+this->yspd);
-}
-
 void Player::applyGravity()
 {
     this->yspd+=1;

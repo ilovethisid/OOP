@@ -14,7 +14,6 @@ public:
 
     Player(int x,int y);
 
-    void move();
     void applyGravity();
     void applyFriction();
 };

@@ -5,13 +5,12 @@
 
 int sign(int x);
 
-Map::Map()
+Map::Map(GameTimer* timer)
 {
-    this->player=new Player(MAPWIDTH/2,MAPHEIGHT/2);
+    this->player=new Player(MAPWIDTH/2,MAPHEIGHT-300);
     this->addItem(player);
 
-    this->timer=new QTimer();
-    this->timer->start(1000/FPS);
+    this->timer=timer;
     connect(this->timer,&QTimer::timeout,this,&Map::update);
 
     Block* block=new Block(MAPWIDTH/2,MAPHEIGHT-100,100,10);
@@ -26,14 +25,19 @@ Map::Map()
 
 void Map::update()
 {
-    if(!this->checkVertCollision())
+    if(!this->checkPlayerBotCollision())
     {
+        // on the air
         this->player->applyGravity();
     }
-    if(!this->checkSideCollision())
+    else if(this->checkPlayerBotCollision())
     {
+        // on the ground
         this->player->applyFriction();
     }
+
+    playerSideMove();
+    playerVertMove();
 }
 
 void Map::addBlock(Block* newblock)
@@ -42,14 +46,142 @@ void Map::addBlock(Block* newblock)
     this->addItem(newblock);
 }
 
-bool Map::checkSideCollision()
+bool Map::checkPlayerLeftCollision()
 {
-    double blockLeft,blockRight;
+    double blockRight;
     double blockTop,blockBot;
 
-    double playerLeft,playerRight;
+    double playerLeft;
     double playerTop,playerBot;
 
+    playerLeft=player->x();
+    playerTop=player->y();
+    playerBot=player->y()+player->h;
+
+    for(int i=0;i<blocks.size();i++)
+    {
+        // check if player collides with block
+
+        blockRight=blocks.at(i)->x+blocks.at(i)->w;
+        blockTop=blocks.at(i)->y;
+        blockBot=blocks.at(i)->y+blocks.at(i)->h;
+
+        if(!(playerTop>=blockBot || playerBot<=blockTop))
+        {
+            if(int(playerLeft)==int(blockRight))
+            {
+                // player collides with block
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool Map::checkPlayerRightCollision()
+{
+    double blockLeft;
+    double blockTop,blockBot;
+
+    double playerRight;
+    double playerTop,playerBot;
+
+    playerRight=player->x()+player->w;
+    playerTop=player->y();
+    playerBot=player->y()+player->h;
+
+    for(int i=0;i<blocks.size();i++)
+    {
+        // check if player collides with block
+
+        blockLeft=blocks.at(i)->x;
+        blockTop=blocks.at(i)->y;
+        blockBot=blocks.at(i)->y+blocks.at(i)->h;
+
+        if(!(playerTop>=blockBot || playerBot<=blockTop))
+        {
+            if(int(playerRight)==int(blockLeft))
+            {
+                // player collides with block
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool Map::checkPlayerTopCollision()
+{
+    double blockLeft,blockRight;
+    double blockBot;
+
+    double playerLeft,playerRight;
+    double playerTop;
+
+    playerLeft=player->x();
+    playerRight=player->x()+player->w;
+    playerTop=player->y();
+
+    for(int i=0;i<blocks.size();i++)
+    {
+        // check if player is under the ceiling
+
+        blockLeft=blocks.at(i)->x;
+        blockRight=blocks.at(i)->x+blocks.at(i)->w;
+        blockBot=blocks.at(i)->y+blocks.at(i)->h;
+
+        if(!(playerLeft>=blockRight || playerRight<=blockLeft))
+        {
+            if(int(blockBot)==int(playerTop))
+            {
+                // player is under the ceiling
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool Map::checkPlayerBotCollision()
+{
+    double blockLeft,blockRight;
+    double blockTop;
+
+    double playerLeft,playerRight;
+    double playerBot;
+
+    playerLeft=player->x();
+    playerRight=player->x()+player->w;
+    playerBot=player->y()+player->h;
+
+    for(int i=0;i<blocks.size();i++)
+    {
+        // check if player is on a block
+
+        blockLeft=blocks.at(i)->x;
+        blockRight=blocks.at(i)->x+blocks.at(i)->w;
+        blockTop=blocks.at(i)->y;
+
+        if(!(playerLeft>=blockRight || playerRight<=blockLeft))
+        {
+            if(int(blockTop)==int(playerBot))
+            {
+                // player is on the block
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+
+
+bool Map::playerSideMove()
+{
     if(player->xspd<0)
     {
         // moving left
@@ -58,36 +190,19 @@ bool Map::checkSideCollision()
         {
             // move xspd amount until player hits the block
 
-            playerLeft=player->x();
-            playerTop=player->y();
-            playerBot=player->y()+player->h;
-
-            for(int i=0;i<blocks.size();i++)
+            if(checkPlayerLeftCollision())
             {
-                // check if player collides with block
-
-                blockRight=blocks.at(i)->x+blocks.at(i)->w;
-                blockTop=blocks.at(i)->y;
-                blockBot=blocks.at(i)->y+blocks.at(i)->h;
-
-                if(!(playerTop>=blockBot || playerBot<=blockTop))
+                if(abs(player->xspd)>5)
                 {
-                    if(int(playerLeft)==int(blockRight))
-                    {
-                        // player collides with block
-                        if(abs(player->xspd)>5)
-                        {
-                            player->xspd=int(-0.5*player->xspd);
-                            // bounce
-                        }
-                        else
-                        {
-                            player->xspd=0;
-                        }
-
-                        return true;
-                    }
+                    player->xspd=int(-0.5*player->xspd);
+                    // bounce
                 }
+                else
+                {
+                    player->xspd=0;
+                }
+
+                return true;
             }
 
             player->setPos(player->x()-1,player->y());
@@ -102,36 +217,19 @@ bool Map::checkSideCollision()
         {
             // move xspd amount until player hits the block
 
-            playerRight=player->x()+player->w;
-            playerTop=player->y();
-            playerBot=player->y()+player->h;
-
-            for(int i=0;i<blocks.size();i++)
+            if(checkPlayerRightCollision())
             {
-                // check if player collides with block
-
-                blockLeft=blocks.at(i)->x;
-                blockTop=blocks.at(i)->y;
-                blockBot=blocks.at(i)->y+blocks.at(i)->h;
-
-                if(!(playerTop>=blockBot || playerBot<=blockTop))
+                if(abs(player->xspd)>5)
                 {
-                    if(int(playerRight)==int(blockLeft))
-                    {
-                        // player collides with block
-                        if(abs(player->xspd)>5)
-                        {
-                            player->xspd=int(-0.5*player->xspd);
-                            // bounce
-                        }
-                        else
-                        {
-                            player->xspd=0;
-                        }
-
-                        return true;
-                    }
+                    player->xspd=int(-0.5*player->xspd);
+                    // bounce
                 }
+                else
+                {
+                    player->xspd=0;
+                }
+
+                return true;
             }
 
             player->setPos(player->x()+1,player->y());
@@ -141,14 +239,8 @@ bool Map::checkSideCollision()
     return false;
 }
 
-bool Map::checkVertCollision()
+bool Map::playerVertMove()
 {
-    double blockLeft,blockRight;
-    double blockTop,blockBot;
-
-    double playerLeft,playerRight;
-    double playerTop,playerBot;
-
     if(player->yspd>0)
     {
         // moving down
@@ -157,36 +249,19 @@ bool Map::checkVertCollision()
         {
             // move yspd amount until player hits the ground
 
-            playerLeft=player->x();
-            playerRight=player->x()+player->w;
-            playerBot=player->y()+player->h;
-
-            for(int i=0;i<blocks.size();i++)
+            if(checkPlayerBotCollision())
             {
-                // check if player is on a block
-
-                blockLeft=blocks.at(i)->x;
-                blockRight=blocks.at(i)->x+blocks.at(i)->w;
-                blockTop=blocks.at(i)->y;
-
-                if(!(playerLeft>=blockRight || playerRight<=blockLeft))
+                if(abs(player->yspd)>5)
                 {
-                    if(int(blockTop)==int(playerBot))
-                    {
-                        // player is on the block
-                        if(abs(player->yspd)>5)
-                        {
-                            player->yspd=int(-0.5*player->yspd);
-                            // bounce
-                        }
-                        else
-                        {
-                            player->yspd=0;
-                        }
-
-                        return true;
-                    }
+                    player->yspd=int(-0.5*player->yspd);
+                    // bounce
                 }
+                else
+                {
+                    player->yspd=0;
+                }
+
+                return true;
             }
 
             player->setPos(player->x(),player->y()+1);
@@ -199,38 +274,21 @@ bool Map::checkVertCollision()
 
         for(int i=0;i<abs(player->yspd);i++)
         {
-            // move yspd amount until player hits the ground
+            // move yspd amount until player hits the ceiling
 
-            playerLeft=player->x();
-            playerRight=player->x()+player->w;
-            playerTop=player->y();
-
-            for(int i=0;i<blocks.size();i++)
+            if(checkPlayerTopCollision())
             {
-                // check if player is on a block
-
-                blockLeft=blocks.at(i)->x;
-                blockRight=blocks.at(i)->x+blocks.at(i)->w;
-                blockBot=blocks.at(i)->y+blocks.at(i)->h;
-
-                if(!(playerLeft>=blockRight || playerRight<=blockLeft))
+                if(abs(player->yspd)>5)
                 {
-                    if(int(blockBot)==int(playerTop))
-                    {
-                        // player is under the ceiling
-                        if(abs(player->yspd)>5)
-                        {
-                            player->yspd=int(-0.5*player->yspd);
-                            // bounce
-                        }
-                        else
-                        {
-                            player->yspd=0;
-                        }
-
-                        return true;
-                    }
+                    player->yspd=int(-0.5*player->yspd);
+                    // bounce
                 }
+                else
+                {
+                    player->yspd=0;
+                }
+
+                return true;
             }
 
             player->setPos(player->x(),player->y()-1);
@@ -242,7 +300,7 @@ bool Map::checkVertCollision()
 
 void Map::keyPressEvent(QKeyEvent* e)
 {
-    if(e->key()==Qt::Key_W)
+    if(e->key()==Qt::Key_W && checkPlayerBotCollision())
     {
         player->yspd=-20;
     }
@@ -257,6 +315,12 @@ void Map::keyPressEvent(QKeyEvent* e)
     if(e->key()==Qt::Key_S)
     {
         player->xspd=0;
+    }
+    if(e->key()==Qt::Key_Space)
+    {
+        // only for testing
+        // flying
+        player->yspd=-10;
     }
 }
 

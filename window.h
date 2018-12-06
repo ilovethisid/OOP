@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Player.h"
+#include "gametimer.h"
+#include "Map.h"
+
 #include <QGraphicsView>
 #include <QGraphicsScene>
 
@@ -8,6 +12,16 @@
 
 class Window: public QGraphicsView
 {
+private:
+    GameTimer* timer;
+    Player* player;
+
 public:
-    Window(QGraphicsScene* scene);
+    Window(Map* map,GameTimer* timer);
+
+private slots:
+    void centerOnPlayer();
 };
+
+
+

@@ -2,6 +2,7 @@
 
 #include "block.h"
 #include "Player.h"
+#include "Gametimer.h"
 
 #include <QGraphicsScene>
 #include <QList>
@@ -10,22 +11,30 @@
 #include <QKeyEvent>
 
 #define FPS 30
-#define MAPWIDTH 800
-#define MAPHEIGHT 600
+#define MAPWIDTH 1200
+#define MAPHEIGHT 1200
 
 class Map:public QGraphicsScene
 {
 private:
     QList<Block*> blocks;
-    Player* player;
-    QTimer* timer;
+    GameTimer* timer;
 
 public:
-    Map();
+    Player* player;
 
+    Map(GameTimer* timer);
+
+    void drawBackground();
     void addBlock(Block* newblock);
-    bool checkSideCollision();
-    bool checkVertCollision();
+
+    bool checkPlayerLeftCollision();
+    bool checkPlayerRightCollision();
+    bool checkPlayerTopCollision();
+    bool checkPlayerBotCollision();
+
+    bool playerSideMove();
+    bool playerVertMove();
     void keyPressEvent(QKeyEvent* e);
 
 private slots:
