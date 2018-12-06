@@ -2,7 +2,7 @@
 
 #include "block.h"
 #include "Player.h"
-#include "gametimer.h"
+#include "GameTimer.h"
 
 #include <QGraphicsScene>
 #include <QList>
@@ -16,6 +16,8 @@ class Map:public QGraphicsScene
 private:
     QList<Block*> blocks;
     GameTimer* timer;
+
+    void blockInit();
 
 public:
     Player* player;
@@ -31,7 +33,6 @@ public:
 
     bool playerSideMove();
     bool playerVertMove();
-    void keyPressEvent(QKeyEvent* e);
 
 private slots:
     void update();

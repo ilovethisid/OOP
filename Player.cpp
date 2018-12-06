@@ -11,6 +11,7 @@ Player::Player(int x,int y)
     this->h=50;
     this->xspd=0;
     this->yspd=0;
+    this->maxspd=20;
 }
 
 void Player::applyGravity()
@@ -20,13 +21,17 @@ void Player::applyGravity()
 
 void Player::applyFriction()
 {
-    if(this->xspd<0)
+    if(this->xspd<-2)
     {
-        this->xspd++;
+        this->xspd+=3;
     }
-    else if(this->xspd>0)
+    else if(this->xspd>2)
     {
-        this->xspd--;
+        this->xspd-=3;
+    }
+    else
+    {
+        this->xspd=0;
     }
 }
 

@@ -14,11 +14,14 @@ class Window: public QGraphicsView
 {
 private:
     GameTimer* timer;
+    Map* map;
     Player* player;
     int mouseInitX;
     int mouseInitY;
     int mouseFinalX;
     int mouseFinalY;
+    QGraphicsLineItem* line;
+    QGraphicsLineItem* projection;
 
     void mousePressEvent(QMouseEvent* e);
     void mouseMoveEvent(QMouseEvent* e);

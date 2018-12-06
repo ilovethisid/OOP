@@ -1,9 +1,7 @@
 #include <QApplication>
 #include <QGraphicsScene>
 #include <QGraphicsView>
-#include <QDesktopWidget>
 #include <QDebug>
-#include <Windows.h>
 #include <QGraphicsRectItem>
 
 #include "Player.h"
