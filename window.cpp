@@ -37,6 +37,7 @@ Window::Window(Map* map,GameTimer* timer) :QGraphicsView(map)
     this->projection=new QGraphicsLineItem();
     this->map->addItem(projection);
     this->lineLength=0;
+    maxLength=10*player->maxspd;
 }
 
 void Window::centerOnPlayer()
@@ -56,9 +57,8 @@ void Window::mouseMoveEvent(QMouseEvent* e)
     int startX,startY;
     int endX,endY;
     int length;
-    int maxLength;
 
-    if(e->type()==QEvent::MouseMove || map->checkPlayerBotCollision())
+    if(e->type()==QEvent::MouseMove && map->checkPlayerBotCollision())
     {
         startX=int(mapToScene(QPoint(mouseInitX,mouseInitY)).x());
         startY=int(mapToScene(QPoint(mouseInitX,mouseInitY)).y());
@@ -66,7 +66,6 @@ void Window::mouseMoveEvent(QMouseEvent* e)
         endY=int(mapToScene(QPoint(e->pos())).y());
 
         length=int(sqrt(pow(startX-endX,2)+pow(startY-endY,2)));
-        maxLength=10*player->maxspd;
 
         QPen* pen=new QPen(Qt::black,5,Qt::DashLine);
         if(length<=maxLength)
@@ -109,17 +108,17 @@ void Window::mouseMoveEvent(QMouseEvent* e)
 
 void Window::mouseReleaseEvent(QMouseEvent* e)
 {
-    if(1||map->checkPlayerBotCollision())
+    if(map->checkPlayerBotCollision())
     {
         mouseFinalX=e->pos().x();
         mouseFinalY=e->pos().y();
 
         int distX=mouseFinalX-mouseInitX;
-        int distY=(mouseFinalY-mouseInitY); // because of computer's coordinate system
+        int distY=mouseFinalY-mouseInitY;
         double angle=atan2(distY,distX);
 
-        int spdX=int(player->maxspd*cos(angle));
-        int spdY=int(player->maxspd*sin(angle)); // because of computer's coordinate system
+        int spdX=int(player->maxspd*cos(angle)*double(lineLength/double(maxLength)));
+        int spdY=int(player->maxspd*sin(angle)*double(lineLength/double(maxLength))); // because of computer's coordinate system
 
         this->player->xspd=spdX;
         this->player->yspd=spdY;

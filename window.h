@@ -23,6 +23,7 @@ private:
     QGraphicsLineItem* line;
     QGraphicsLineItem* projection;
     int lineLength;
+    int maxLength;
 
     void mousePressEvent(QMouseEvent* e);
     void mouseMoveEvent(QMouseEvent* e);
