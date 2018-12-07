@@ -1,5 +1,6 @@
-#include "Window.h"
+#include "window.h"
 #include "MyFunc.h"
+#include "Interface.h"
 
 #include <QStyle>
 #include <QApplication>
@@ -30,6 +31,7 @@ Window::Window(Map* map,GameTimer* timer) :QGraphicsView(map)
     // mouse
     mouseInitX=0;
     mouseInitY=0;
+    mousePressed=false;
 
     // line
     this->line=new QGraphicsLineItem();
@@ -38,6 +40,8 @@ Window::Window(Map* map,GameTimer* timer) :QGraphicsView(map)
     this->map->addItem(projection);
     this->lineLength=0;
     maxLength=10*player->maxspd;
+
+    this->scale(1,1);
 }
 
 void Window::centerOnPlayer()
@@ -50,6 +54,7 @@ void Window::mousePressEvent(QMouseEvent* e)
 {
     mouseInitX=e->pos().x();
     mouseInitY=e->pos().y();
+    mousePressed=true;
 }
 
 void Window::mouseMoveEvent(QMouseEvent* e)
@@ -58,7 +63,7 @@ void Window::mouseMoveEvent(QMouseEvent* e)
     int endX,endY;
     int length;
 
-    if(e->type()==QEvent::MouseMove && map->checkPlayerBotCollision())
+    if(e->type()==QEvent::MouseMove && mousePressed && player->isAlive && map->checkPlayerBotCollision())
     {
         startX=int(mapToScene(QPoint(mouseInitX,mouseInitY)).x());
         startY=int(mapToScene(QPoint(mouseInitX,mouseInitY)).y());
@@ -108,7 +113,7 @@ void Window::mouseMoveEvent(QMouseEvent* e)
 
 void Window::mouseReleaseEvent(QMouseEvent* e)
 {
-    if(map->checkPlayerBotCollision())
+    if(player->isAlive && mousePressed) //map->checkPlayerBotCollision())
     {
         mouseFinalX=e->pos().x();
         mouseFinalY=e->pos().y();
@@ -126,6 +131,7 @@ void Window::mouseReleaseEvent(QMouseEvent* e)
 
     line->hide();
     projection->hide();
+    mousePressed=false;
 }
 
 

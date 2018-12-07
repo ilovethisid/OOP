@@ -2,33 +2,51 @@
 
 #include <QDebug>
 #include <math.h>
+#include <ctime>
+#include <cstdlib>
+
+using namespace std;
 
 Map::Map(GameTimer* timer)
 {
-    this->player=new Player(MAPWIDTH/2,MAPHEIGHT-300);
+    this->player=new Player(MAPWIDTH/2,MAPHEIGHT-100);
     this->addItem(player);
 
     this->timer=timer;
     connect(this->timer,&QTimer::timeout,this,&Map::update);
 
     blockInit(); // create all block
+
+    this->gameoverLayer=new GameoverLayer();
+    this->gameoverLayer->setRect(0,0,MAPWIDTH,MAPHEIGHT);
+    this->gameoverLayer->hide();
+    this->addItem(gameoverLayer);
+    this->gameover=false;
+    // init gameover layer
+
+    //this->addItem(gameoverLayer->text);
+    //gameoverLayer->text->hide();
 }
 
 void Map::update()
 {
-    if(!this->checkPlayerBotCollision())
+    // player move
+    if(player->isAlive)
     {
-        // on the air
-        this->player->applyGravity();
-    }
-    else if(this->checkPlayerBotCollision())
-    {
-        // on the ground
-        this->player->applyFriction();
-    }
+        if(!this->checkPlayerBotCollision())
+        {
+            // on the air
+            this->player->applyGravity();
+        }
+        else if(this->checkPlayerBotCollision())
+        {
+            // on the ground
+            this->player->applyFriction();
+        }
 
-    playerSideMove();
-    playerVertMove();
+        playerSideMove();
+        playerVertMove();
+    }
 }
 
 void Map::addBlock(Block* newblock)
@@ -244,8 +262,18 @@ bool Map::playerVertMove()
             {
                 if(abs(player->yspd)>5)
                 {
-                    player->yspd=int(-0.5*player->yspd);
-                    // bounce
+                    if(player->yspd>player->deathspd)
+                    {
+                        // if player falls too fast
+                        player->die();
+                        gameoverLayer->show();
+                        this->gameover=true;
+                    }
+                    else
+                    {
+                        player->yspd=int(-0.5*player->yspd);
+                        // bounce
+                    }
                 }
                 else
                 {
@@ -289,130 +317,100 @@ bool Map::playerVertMove()
     return false;
 }
 
+void Map::keyPressEvent(QKeyEvent* e)
+{
+    if(e->key()==Qt::Key_W)
+    {
+        player->yspd=-10;
+    }
+    if(e->key()==Qt::Key_A)
+    {
+        player->xspd=-10;
+    }
+    if(e->key()==Qt::Key_D)
+    {
+        player->xspd=10;
+    }
+    if(e->key()==Qt::Key_S)
+    {
+        player->xspd=0;
+        player->yspd=0;
+    }
+}
+
 void Map::blockInit()
 {
-    Block* ground=new Block(0,MAPHEIGHT-10,MAPWIDTH,10);      // ground
-    Block* leftwall=new Block(0,-500,10,MAPHEIGHT+490);           // left wall
-    Block* rightwall=new Block(MAPWIDTH-10,-500,1,MAPHEIGHT+490); // right wall
-    Block* block1=new Block(MAPWIDTH/2-1100,MAPHEIGHT-100,250,10);
-    Block* block2=new Block(MAPWIDTH/2-750,MAPHEIGHT-100,180,20);
-    Block* block3=new Block(MAPWIDTH/2-300,MAPHEIGHT-100,150,30);
-    Block* block4=new Block(MAPWIDTH/2+100,MAPHEIGHT-100,120,30);
-    Block* block5=new Block(MAPWIDTH/2+420,MAPHEIGHT-100,200,25);
-    Block* block6=new Block(MAPWIDTH/2+800,MAPHEIGHT-100,180,10);
-    Block* block7=new Block(MAPWIDTH/2-900,MAPHEIGHT-250,300,20);
-    Block* block8=new Block(MAPWIDTH/2-400,MAPHEIGHT-200,260,10);
-    Block* block9=new Block(MAPWIDTH/2+150,MAPHEIGHT-200,100,15);
-    Block* block10=new Block(MAPWIDTH/2+650,MAPHEIGHT-250,250,10);
-    Block* block11=new Block(MAPWIDTH/2-900,MAPHEIGHT-400,280,10);
-    Block* block12=new Block(MAPWIDTH/2-500,MAPHEIGHT-350,300,10);
-    Block* block13=new Block(MAPWIDTH/2+200,MAPHEIGHT-380,250,20);
-    Block* block14=new Block(MAPWIDTH/2+850,MAPHEIGHT-400,200,10);
-    Block* block15=new Block(MAPWIDTH/2-1000,MAPHEIGHT-450,250,10);
-    Block* block16=new Block(MAPWIDTH/2-1190,MAPHEIGHT-300,150,10);
-    Block* block17=new Block(MAPWIDTH/2-1100,MAPHEIGHT-600,150,10);
-    Block* block18=new Block(MAPWIDTH/2-750,MAPHEIGHT-650,300,30);
-    Block* block19=new Block(MAPWIDTH/2-700,MAPHEIGHT-680,250,30);
-    Block* block20=new Block(MAPWIDTH/2-600,MAPHEIGHT-710,100,30);
-    Block* block21=new Block(MAPWIDTH/2-550,MAPHEIGHT-740,50,30);
-    Block* block22=new Block(MAPWIDTH/2,MAPHEIGHT-500,300,10);
-    Block* block23=new Block(MAPWIDTH/2+700,MAPHEIGHT-600,350,30);
-    Block* block24=new Block(MAPWIDTH/2+800,MAPHEIGHT-620,150,20);
-    Block* block25=new Block(MAPWIDTH/2+900,MAPHEIGHT-800,10,180);
-    Block* block26=new Block(MAPWIDTH/2+400,MAPHEIGHT-550,250,10);
-    Block* block27=new Block(MAPWIDTH/2-400,MAPHEIGHT-500,200,10);
-    Block* block28=new Block(MAPWIDTH/2-1100,MAPHEIGHT-900,400,20);
-    Block* block29=new Block(MAPWIDTH/2-600,MAPHEIGHT-1000,250,50);
-    Block* block30=new Block(MAPWIDTH/2-100,MAPHEIGHT-850,150,20);
-    Block* block31=new Block(MAPWIDTH/2-200,MAPHEIGHT-650,250,30);
-    Block* block32=new Block(MAPWIDTH/2+200,MAPHEIGHT-750,250,30);
-    Block* block33=new Block(MAPWIDTH/2+600,MAPHEIGHT-850,250,40);
-    Block* block34=new Block(MAPWIDTH/2+1000,MAPHEIGHT-900,190,20);
-    Block* block35=new Block(MAPWIDTH/2-1150,MAPHEIGHT-1100,250,20);
-    Block* block36=new Block(MAPWIDTH/2-1050,MAPHEIGHT-1150,200,10);
-    Block* block37=new Block(MAPWIDTH/2+1090,MAPHEIGHT-220,100,10);
-    Block* block38=new Block(MAPWIDTH/2-350,MAPHEIGHT-1150,250,10);
-    Block* block39=new Block(MAPWIDTH/2+50,MAPHEIGHT-1000,200,20);
-    Block* block40=new Block(MAPWIDTH/2+450,MAPHEIGHT-1220,350,50);
-    Block* block41=new Block(MAPWIDTH/2+550,MAPHEIGHT-1250,250,30);
-    Block* block42=new Block(MAPWIDTH/2+580,MAPHEIGHT-1270,180,20);
-    Block* block43=new Block(MAPWIDTH/2+100,MAPHEIGHT-1250,280,30);
-    Block* block44=new Block(MAPWIDTH/2+450,MAPHEIGHT-1000,210,10);
-    Block* block45=new Block(MAPWIDTH/2-950,MAPHEIGHT-1250,150,30);
-    Block* block46=new Block(MAPWIDTH/2-1080,MAPHEIGHT-1470,250,20);
-    Block* block47=new Block(MAPWIDTH/2-750,MAPHEIGHT-1320,200,20);
-    Block* block48=new Block(MAPWIDTH/2-900,MAPHEIGHT-1330,50,80);
-    Block* block49=new Block(MAPWIDTH/2-720,MAPHEIGHT-1650,300,30);
-    Block* block50=new Block(MAPWIDTH/2-280,MAPHEIGHT-1500,280,20);
-    Block* block51=new Block(MAPWIDTH/2+250,MAPHEIGHT-1700,20,450);
-    Block* block52=new Block(MAPWIDTH/2+600,MAPHEIGHT-1370,150,100);
-    Block* block53=new Block(MAPWIDTH/2+650,MAPHEIGHT-1570,50,200);
-    Block* block54=new Block(MAPWIDTH/2-1180,MAPHEIGHT-1900,260,20);
-    Block* block55=new Block(MAPWIDTH/2-750,MAPHEIGHT-1850,320,30);
-    Block* block56=new Block(MAPWIDTH/2-150,MAPHEIGHT-1700,200,40);
-    Block* block57=new Block(MAPWIDTH/2+670,MAPHEIGHT-1700,10,130);
+    Block* ground=new Block(0,MAPHEIGHT-10,MAPWIDTH,MAPHEIGHT); // ground
+    Block* leftwall=new Block(0,0,10,MAPHEIGHT); // left wall
+    Block* rightwall=new Block(MAPWIDTH-10,0,MAPWIDTH,MAPHEIGHT); // right wall
+
+    int blockX=MAPWIDTH/2;
+    int blockY=MAPHEIGHT;
+    int dir=1;
+
+    // making random blocks that go up
+    for(int i=0;i<50;i++)
+    {
+        srand(unsigned(int(time(nullptr))+i));
+        // new seed for rand()
+
+        if(rand()%2==0)
+        {
+            dir=1;
+        }
+        else
+        {
+            dir=-1;
+        }
+
+        blockX+=dir*200;
+
+        switch(rand()%4)
+        {
+        case 0:
+        {
+            blockX+=dir*60;
+            blockY-=150;
+            break;
+        }
+        case 1:
+        {
+            blockX+=dir*100;
+            blockY-=100;
+            break;
+        }
+        default:
+        {
+            blockX+=dir*150;
+            blockY-=60;
+        }
+        }
+
+        Block* newblock=new Block(blockX,blockY,200,20);
+        this->addBlock(newblock);
+    }
+
+    if(rand()%2==0)
+    {
+        dir=1;
+    }
+    else
+    {
+        dir=-1;
+    }
+
+    blockX+=dir*200;
+    blockX+=dir*60;
+    blockY-=150;
+
+    Block* endblock=new Block(blockX,blockY,200,20);
+    this->addBlock(endblock);
+    endblock->setBrush(Qt::green);
 
     // add the item to the map
     this->addBlock(ground);
     this->addBlock(leftwall);
     this->addBlock(rightwall);
-    this->addBlock(block1);
-    this->addBlock(block2);
-    this->addBlock(block3);
-    this->addBlock(block4);
-    this->addBlock(block5);
-    this->addBlock(block6);
-    this->addBlock(block7);
-    this->addBlock(block8);
-    this->addBlock(block9);
-    this->addBlock(block10);
-    this->addBlock(block11);
-    this->addBlock(block12);
-    this->addBlock(block13);
-    this->addBlock(block14);
-    this->addBlock(block15);
-    this->addBlock(block16);
-    this->addBlock(block17);
-    this->addBlock(block18);
-    this->addBlock(block19);
-    this->addBlock(block20);
-    this->addBlock(block21);
-    this->addBlock(block22);
-    this->addBlock(block23);
-    this->addBlock(block24);
-    this->addBlock(block25);
-    this->addBlock(block26);
-    this->addBlock(block27);
-    this->addBlock(block28);
-    this->addBlock(block29);
-    this->addBlock(block30);
-    this->addBlock(block31);
-    this->addBlock(block32);
-    this->addBlock(block33);
-    this->addBlock(block34);
-    this->addBlock(block35);
-    this->addBlock(block36);
-    this->addBlock(block37);
-    this->addBlock(block38);
-    this->addBlock(block39);
-    this->addBlock(block40);
-    this->addBlock(block41);
-    this->addBlock(block42);
-    this->addBlock(block43);
-    this->addBlock(block44);
-    this->addBlock(block45);
-    this->addBlock(block46);
-    this->addBlock(block47);
-    this->addBlock(block48);
-    this->addBlock(block49);
-    this->addBlock(block50);
-    this->addBlock(block51);
-    this->addBlock(block52);
-    this->addBlock(block53);
-    this->addBlock(block54);
-    this->addBlock(block55);
-    this->addBlock(block56);
-    this->addBlock(block57);
 }
 
 

@@ -12,7 +12,8 @@ SOURCES += \
     Player.cpp \
     Block.cpp \
     Map.cpp \
-    GameTimer.cpp
+    GameTimer.cpp \
+    Interface.cpp
 
 HEADERS += \
     Window.h \
@@ -21,4 +22,5 @@ HEADERS += \
     Block.h \
     Map.h \
     MyFunc.h \
-    GameTimer.h
+    GameTimer.h \
+    Interface.h

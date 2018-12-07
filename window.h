@@ -20,6 +20,7 @@ private:
     int mouseInitY;
     int mouseFinalX;
     int mouseFinalY;
+    bool mousePressed;
     QGraphicsLineItem* line;
     QGraphicsLineItem* projection;
     int lineLength;
@@ -28,6 +29,7 @@ private:
     void mousePressEvent(QMouseEvent* e);
     void mouseMoveEvent(QMouseEvent* e);
     void mouseReleaseEvent(QMouseEvent* e);
+    void showGameoverInterface();
 
 public:
     Window(Map* map,GameTimer* timer);

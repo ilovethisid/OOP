@@ -11,28 +11,41 @@ Player::Player(int x,int y)
     this->h=30;
     this->xspd=0;
     this->yspd=0;
-    this->maxspd=20;
+    this->isAlive=true;
 }
+
+int Player::maxspd=20;
+int Player::maxfallspd=30;
+int Player::deathspd=25;
 
 void Player::applyGravity()
 {
-    this->yspd+=1;
+    if(this->yspd<maxfallspd)
+    {
+        this->yspd+=1;
+    }
 }
 
 void Player::applyFriction()
 {
-    if(this->xspd<-2)
+    if(this->xspd<-1)
     {
-        this->xspd+=3;
+        this->xspd+=2;
     }
-    else if(this->xspd>2)
+    else if(this->xspd>1)
     {
-        this->xspd-=3;
+        this->xspd-=2;
     }
     else
     {
         this->xspd=0;
     }
+}
+
+void Player::die()
+{
+    this->isAlive=false;
+    this->setBrush(Qt::red);
 }
 
 

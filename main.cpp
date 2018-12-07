@@ -8,7 +8,7 @@
 #include "window.h"
 #include "block.h"
 #include "Map.h"
-#include "gametimer.h"
+#include "GameTimer.h"
 
 #define FPS 30
 
