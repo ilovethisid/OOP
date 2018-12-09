@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Player.h"
-#include "gametimer.h"
+#include "GameTimer.h"
 #include "Map.h"
 
 #include <QGraphicsView>
@@ -12,6 +12,7 @@
 
 class Window: public QGraphicsView
 {
+    Q_OBJECT
 private:
     GameTimer* timer;
     Map* map;
@@ -29,13 +30,15 @@ private:
     void mousePressEvent(QMouseEvent* e);
     void mouseMoveEvent(QMouseEvent* e);
     void mouseReleaseEvent(QMouseEvent* e);
-    void showGameoverInterface();
 
 public:
     Window(Map* map,GameTimer* timer);
 
 private slots:
     void centerOnPlayer();
+    void showGameoverInterface();
+    void gameend();
+    void regame();
 };
 
 

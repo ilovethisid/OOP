@@ -8,4 +8,5 @@ class GameTimer:public QTimer
 {
 public:
     GameTimer();
+    GameTimer(int time);
 };

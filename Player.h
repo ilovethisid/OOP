@@ -6,6 +6,9 @@
 #include <QKeyEvent>
 #include <QGraphicsScene>
 
+#define PLAYER_START_X MAPWIDTH/2
+#define PLAYER_START_Y MAPHEIGHT-100
+
 class Player: public QGraphicsRectItem
 {
 private:
@@ -23,5 +26,6 @@ public:
     void applyGravity();
     void applyFriction();
     void die();
+    void respawn();
 };
 

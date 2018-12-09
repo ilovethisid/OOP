@@ -10,20 +10,19 @@
 #include <QKeyEvent>
 
 #define MAPWIDTH 4000
-#define MAPHEIGHT 8000
+#define MAPHEIGHT 5500
 
 class Map:public QGraphicsScene
 {
+    Q_OBJECT
 private:
     QList<Block*> blocks;
     GameTimer* timer;
-
-    void blockInit();
+    Block* endblock;
 
 public:
     Player* player;
     GameoverLayer* gameoverLayer;
-    bool gameover;
 
     Map(GameTimer* timer);
 
@@ -38,9 +37,15 @@ public:
     bool playerVertMove();
 
     void keyPressEvent(QKeyEvent* e);
+    void blockInit();
 
 private slots:
     void update();
+    void respawn();
+
+signals:
+    void gameover();
+    void gameend();
 };
 
 

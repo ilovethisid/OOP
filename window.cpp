@@ -7,9 +7,11 @@
 #include <QDesktopWidget>
 #include <QDebug>
 #include <math.h>
+#include <ctime>
 
 Window::Window(Map* map,GameTimer* timer) :QGraphicsView(map)
 {
+    // window properties
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setFixedSize(WINWIDTH,WINHEIGHT);
@@ -41,13 +43,43 @@ Window::Window(Map* map,GameTimer* timer) :QGraphicsView(map)
     this->lineLength=0;
     maxLength=10*player->maxspd;
 
-    this->scale(1,1);
+    // game event
+    connect(this->map,&Map::gameover,this,&Window::showGameoverInterface);
+    connect(this->map,&Map::gameend,this,&Window::gameend);
 }
 
 void Window::centerOnPlayer()
 {
     // always center on player
     this->centerOn(this->player);
+}
+
+void Window::gameend()
+{
+    player->setBrush(Qt::yellow);
+    EndingScene* endingScene=new EndingScene(WINWIDTH,WINHEIGHT);
+    this->setScene(endingScene);
+    endingScene->addItem(player);
+    player->setPos(WINWIDTH/2-player->w/2,WINHEIGHT/2-player->h/2);
+    connect(endingScene->button,&QPushButton::pressed,this,&Window::regame);
+}
+
+void Window::regame()
+{
+    // basics
+    setScene(map);
+    timer->start();
+
+    // player init
+    player->setPos(PLAYER_START_X,PLAYER_START_Y);
+    player->show();
+    player->setBrush(Qt::white);
+    player->xspd=0;
+    player->yspd=0;
+    map->addItem(player);
+
+    // block init
+    //map->blockInit();
 }
 
 void Window::mousePressEvent(QMouseEvent* e)
@@ -113,7 +145,7 @@ void Window::mouseMoveEvent(QMouseEvent* e)
 
 void Window::mouseReleaseEvent(QMouseEvent* e)
 {
-    if(player->isAlive && mousePressed) //map->checkPlayerBotCollision())
+    if(player->isAlive && mousePressed && map->checkPlayerBotCollision())
     {
         mouseFinalX=e->pos().x();
         mouseFinalY=e->pos().y();
@@ -132,6 +164,14 @@ void Window::mouseReleaseEvent(QMouseEvent* e)
     line->hide();
     projection->hide();
     mousePressed=false;
+}
+
+void Window::showGameoverInterface()
+{
+    int originX=int(mapToScene(QPoint(0,0)).x());
+    int originY=int(mapToScene(QPoint(0,0)).y());
+
+    map->gameoverLayer->display(originX,originY,WINWIDTH,WINHEIGHT);
 }
 
 

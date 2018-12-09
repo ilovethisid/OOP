@@ -9,7 +9,7 @@ using namespace std;
 
 Map::Map(GameTimer* timer)
 {
-    this->player=new Player(MAPWIDTH/2,MAPHEIGHT-100);
+    this->player=new Player(PLAYER_START_X,PLAYER_START_Y);
     this->addItem(player);
 
     this->timer=timer;
@@ -18,14 +18,13 @@ Map::Map(GameTimer* timer)
     blockInit(); // create all block
 
     this->gameoverLayer=new GameoverLayer();
-    this->gameoverLayer->setRect(0,0,MAPWIDTH,MAPHEIGHT);
+
     this->gameoverLayer->hide();
     this->addItem(gameoverLayer);
-    this->gameover=false;
     // init gameover layer
 
-    //this->addItem(gameoverLayer->text);
-    //gameoverLayer->text->hide();
+    this->addWidget(gameoverLayer->button);
+    connect(gameoverLayer->button,&QPushButton::pressed,this,&Map::respawn);
 }
 
 void Map::update()
@@ -47,6 +46,15 @@ void Map::update()
         playerSideMove();
         playerVertMove();
     }
+}
+
+void Map::respawn()
+{
+    player->respawn();
+    player->setPos(PLAYER_START_X,PLAYER_START_Y);
+    this->gameoverLayer->button->hide();
+    this->gameoverLayer->hide();
+    this->timer->start();
 }
 
 void Map::addBlock(Block* newblock)
@@ -266,8 +274,8 @@ bool Map::playerVertMove()
                     {
                         // if player falls too fast
                         player->die();
-                        gameoverLayer->show();
-                        this->gameover=true;
+                        emit gameover();
+                        this->timer->stop();
                     }
                     else
                     {
@@ -313,6 +321,19 @@ bool Map::playerVertMove()
             player->setPos(player->x(),player->y()-1);
         }
     }
+    else
+    {
+        // if player->yspd=0
+
+        int jumpheight=player->maxspd*(player->maxspd-1)/2;
+
+        if(player->y()<endblock->y-jumpheight+30)
+        {
+            // if player is higher than endblock
+            timer->stop();
+            emit gameend();
+        }
+    }
 
     return false;
 }
@@ -321,7 +342,7 @@ void Map::keyPressEvent(QKeyEvent* e)
 {
     if(e->key()==Qt::Key_W)
     {
-        player->yspd=-10;
+        player->yspd=-20;
     }
     if(e->key()==Qt::Key_A)
     {
@@ -344,6 +365,12 @@ void Map::blockInit()
     Block* leftwall=new Block(0,0,10,MAPHEIGHT); // left wall
     Block* rightwall=new Block(MAPWIDTH-10,0,MAPWIDTH,MAPHEIGHT); // right wall
 
+    // add the item to the map
+    this->addBlock(ground);
+    this->addBlock(leftwall);
+    this->addBlock(rightwall);
+
+    // variables to create random blocks
     int blockX=MAPWIDTH/2;
     int blockY=MAPHEIGHT;
     int dir=1;
@@ -403,14 +430,9 @@ void Map::blockInit()
     blockX+=dir*60;
     blockY-=150;
 
-    Block* endblock=new Block(blockX,blockY,200,20);
+    endblock=new Block(blockX,blockY,200,20);
     this->addBlock(endblock);
     endblock->setBrush(Qt::green);
-
-    // add the item to the map
-    this->addBlock(ground);
-    this->addBlock(leftwall);
-    this->addBlock(rightwall);
 }
 
 

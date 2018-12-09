@@ -15,8 +15,8 @@ Player::Player(int x,int y)
 }
 
 int Player::maxspd=20;
-int Player::maxfallspd=30;
-int Player::deathspd=25;
+int Player::maxfallspd=40;
+int Player::deathspd=30;
 
 void Player::applyGravity()
 {
@@ -46,6 +46,14 @@ void Player::die()
 {
     this->isAlive=false;
     this->setBrush(Qt::red);
+    this->xspd=0;
+    this->yspd=0;
+}
+
+void Player::respawn()
+{
+    this->isAlive=true;
+    this->setBrush(Qt::white);
 }
 
 
