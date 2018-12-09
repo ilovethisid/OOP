@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <Windows.h>
+#include <QBrush>
 
 Player::Player(int x,int y)
 {
@@ -11,6 +12,8 @@ Player::Player(int x,int y)
     this->h=30;
     this->xspd=0;
     this->yspd=0;
+    this->setBrush(Qt::black);
+    this->setPen(QPen(Qt::white,2));
     this->isAlive=true;
 }
 
@@ -53,7 +56,8 @@ void Player::die()
 void Player::respawn()
 {
     this->isAlive=true;
-    this->setBrush(Qt::white);
+    this->setBrush(Qt::black);
+    this->setPen(QPen(Qt::white,2));
 }
 
 

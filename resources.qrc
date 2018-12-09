@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/sounds">
+        <file>bow-pull.wav</file>
+        <file>bow-release.mp3</file>
+        <file>drop.wav</file>
+    </qresource>
+    <qresource prefix="/"/>
+</RCC>

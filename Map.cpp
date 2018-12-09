@@ -4,6 +4,8 @@
 #include <math.h>
 #include <ctime>
 #include <cstdlib>
+#include <QMediaPlayer>
+#include <QLinearGradient>
 
 using namespace std;
 
@@ -17,8 +19,16 @@ Map::Map(GameTimer* timer)
 
     blockInit(); // create all block
 
-    this->gameoverLayer=new GameoverLayer();
+    QGradient* gradient=new QLinearGradient(MAPWIDTH/2,0,MAPWIDTH/2,MAPHEIGHT);
+    gradient->setColorAt(1,Qt::white);
+    gradient->setColorAt(0.75,QColor(153,153,255));
+    gradient->setColorAt(0.5,QColor(255,0,0));
+    gradient->setColorAt(0.25,Qt::black);
+    gradient->setColorAt(0,Qt::black);
+    QBrush* bgBrush=new QBrush(QGradient(*gradient));
+    setBackgroundBrush(QBrush(*bgBrush));
 
+    this->gameoverLayer=new GameoverLayer();
     this->gameoverLayer->hide();
     this->addItem(gameoverLayer);
     // init gameover layer
@@ -219,6 +229,15 @@ bool Map::playerSideMove()
                     player->xspd=0;
                 }
 
+                if(abs(player->xspd)>0)
+                {
+                    QMediaPlayer* mediaPlayer=new QMediaPlayer();
+                    mediaPlayer->setMedia(QUrl("qrc:/sounds/drop.wav"));
+                    mediaPlayer->setVolume(100);
+                    mediaPlayer->play();
+                }
+                // play sound
+
                 return true;
             }
 
@@ -245,6 +264,15 @@ bool Map::playerSideMove()
                 {
                     player->xspd=0;
                 }
+
+                if(abs(player->xspd)>0)
+                {
+                    QMediaPlayer* mediaPlayer=new QMediaPlayer();
+                    mediaPlayer->setMedia(QUrl("qrc:/sounds/drop.wav"));
+                    mediaPlayer->setVolume(100);
+                    mediaPlayer->play();
+                }
+                // play sound
 
                 return true;
             }
@@ -288,6 +316,15 @@ bool Map::playerVertMove()
                     player->yspd=0;
                 }
 
+                if(abs(player->yspd)>0)
+                {
+                    QMediaPlayer* mediaPlayer=new QMediaPlayer();
+                    mediaPlayer->setMedia(QUrl("qrc:/sounds/drop.wav"));
+                    mediaPlayer->setVolume(100);
+                    mediaPlayer->play();
+                }
+                // play sound
+
                 return true;
             }
 
@@ -314,6 +351,15 @@ bool Map::playerVertMove()
                 {
                     player->yspd=0;
                 }
+
+                if(abs(player->yspd)>0)
+                {
+                    QMediaPlayer* mediaPlayer=new QMediaPlayer();
+                    mediaPlayer->setMedia(QUrl("qrc:/sounds/drop.wav"));
+                    mediaPlayer->setVolume(100);
+                    mediaPlayer->play();
+                }
+                // play sound
 
                 return true;
             }
@@ -361,6 +407,15 @@ void Map::keyPressEvent(QKeyEvent* e)
 
 void Map::blockInit()
 {
+    if(blocks.size()>0)
+    {
+        for(int i=0;i<blocks.size();i++)
+        {
+            this->removeItem(blocks.at(i));
+        }
+        blocks.clear();
+    }
+
     Block* ground=new Block(0,MAPHEIGHT-10,MAPWIDTH,MAPHEIGHT); // ground
     Block* leftwall=new Block(0,0,10,MAPHEIGHT); // left wall
     Block* rightwall=new Block(MAPWIDTH-10,0,MAPWIDTH,MAPHEIGHT); // right wall
@@ -415,6 +470,10 @@ void Map::blockInit()
 
         Block* newblock=new Block(blockX,blockY,200,20);
         this->addBlock(newblock);
+        if(newblock->y<MAPHEIGHT/2)
+        {
+            newblock->setPen(QPen(Qt::white,2));
+        }
     }
 
     if(rand()%2==0)
@@ -431,8 +490,9 @@ void Map::blockInit()
     blockY-=150;
 
     endblock=new Block(blockX,blockY,200,20);
-    this->addBlock(endblock);
     endblock->setBrush(Qt::green);
+    endblock->setPen(QPen(Qt::white,2));
+    this->addBlock(endblock);
 }
 
 

@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <math.h>
 #include <ctime>
+#include <QMediaPlayer>
 
 Window::Window(Map* map,GameTimer* timer) :QGraphicsView(map)
 {
@@ -57,6 +58,7 @@ void Window::centerOnPlayer()
 void Window::gameend()
 {
     player->setBrush(Qt::yellow);
+    player->setPen(QPen(Qt::yellow,2));
     EndingScene* endingScene=new EndingScene(WINWIDTH,WINHEIGHT);
     this->setScene(endingScene);
     endingScene->addItem(player);
@@ -73,13 +75,14 @@ void Window::regame()
     // player init
     player->setPos(PLAYER_START_X,PLAYER_START_Y);
     player->show();
-    player->setBrush(Qt::white);
+    player->setBrush(Qt::black);
+    player->setPen(QPen(Qt::white,2));
     player->xspd=0;
     player->yspd=0;
     map->addItem(player);
 
     // block init
-    //map->blockInit();
+    map->blockInit();
 }
 
 void Window::mousePressEvent(QMouseEvent* e)
@@ -87,6 +90,14 @@ void Window::mousePressEvent(QMouseEvent* e)
     mouseInitX=e->pos().x();
     mouseInitY=e->pos().y();
     mousePressed=true;
+
+    QMediaPlayer* mediaPlayer=new QMediaPlayer();
+    mediaPlayer->setMedia(QUrl("qrc:/sounds/bow-pull.wav"));
+    if(player->isAlive && map->checkPlayerBotCollision())
+    {
+        // if player is on the ground
+        mediaPlayer->play();
+    }
 }
 
 void Window::mouseMoveEvent(QMouseEvent* e)
@@ -115,7 +126,14 @@ void Window::mouseMoveEvent(QMouseEvent* e)
         }
 
         line->setPen(*pen);
-        pen->setColor(Qt::black);
+        if(player->y()<MAPHEIGHT/2)
+        {
+            pen->setColor(Qt::white);
+        }
+        else
+        {
+            pen->setColor(Qt::black);
+        }
         projection->setPen(*pen);
 
         int playerX=int(player->x()+player->w/2);
@@ -159,6 +177,10 @@ void Window::mouseReleaseEvent(QMouseEvent* e)
 
         this->player->xspd=spdX;
         this->player->yspd=spdY;
+
+        QMediaPlayer* mediaPlayer=new QMediaPlayer();
+        mediaPlayer->setMedia(QUrl("qrc:/sounds/bow-release.mp3"));
+        mediaPlayer->play();
     }
 
     line->hide();
