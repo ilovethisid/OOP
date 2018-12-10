@@ -5,6 +5,7 @@
 #include <QGraphicsRectItem>
 #include <QKeyEvent>
 #include <QGraphicsScene>
+#include <QObject>
 
 #define PLAYER_START_X MAPWIDTH/2
 #define PLAYER_START_Y MAPHEIGHT-100

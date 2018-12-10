@@ -37,8 +37,14 @@ public:
 private slots:
     void centerOnPlayer();
     void showGameoverInterface();
+    void gamestart();
     void gameend();
     void regame();
+
+signals:
+    void sound_bow_pull();
+    void sound_bow_release();
+    void sound_button();
 };
 
 

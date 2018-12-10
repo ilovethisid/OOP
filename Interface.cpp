@@ -3,6 +3,63 @@
 #include <QColor>
 #include <QBrush>
 #include <QDebug>
+#include <QMediaPlayer>
+
+StartMenu::StartMenu(int WINWIDTH,int WINHEIGHT)
+{
+    // scene
+    this->setBackgroundBrush(Qt::black);
+    this->setSceneRect(0,0,WINWIDTH,WINHEIGHT);
+
+    // text
+    text=new QGraphicsTextItem("S h i n e !");
+    text->setFont(QFont("Century Gothic",48));
+    text->setDefaultTextColor(Qt::white);
+    int textWidth=int(text->boundingRect().width());
+    int textHeight=int(text->boundingRect().height());
+    addItem(text);
+    text->setPos(WINWIDTH/2-textWidth/2,WINHEIGHT/2-textHeight/2-100);
+    text->hide();
+
+    // player-like rect
+    QGraphicsRectItem* rect=new QGraphicsRectItem();
+    rect->setRect(WINWIDTH/2-15,WINHEIGHT/2-15,30,30);
+    rect->setPen(QPen(Qt::white,2));
+    addItem(rect);
+
+    // button
+    int buttonWidth=250;
+    int buttonHeight=50;
+    button=new QPushButton("Start");
+    button->setFont(QFont("Century Gothic",28));
+    button->setGeometry(QRect(WINWIDTH/2-buttonWidth/2,WINHEIGHT/2+100,buttonWidth,buttonHeight));
+    button->setAutoFillBackground(false);
+    button->setStyleSheet("color:white;background-color:black;");
+    button->hide();
+    button->setMouseTracking(true);
+    addWidget(button);
+
+    displayText();
+    displayButton();
+}
+
+void StartMenu::displayText()
+{
+    QMediaPlayer* mediaPlayer=new QMediaPlayer();
+    mediaPlayer->setMedia(QUrl("qrc:/sounds/button.wav"));
+    mediaPlayer->play();
+    // play button sound;
+    text->show();
+}
+
+void StartMenu::displayButton()
+{
+    QMediaPlayer* mediaPlayer=new QMediaPlayer();
+    mediaPlayer->setMedia(QUrl("qrc:/sounds/button.wav"));
+    mediaPlayer->play();
+    // play button sound;
+    button->show();
+}
 
 RespawnButton::RespawnButton(QString str):QPushButton (str)
 {
@@ -80,11 +137,19 @@ EndingScene::EndingScene(int WINWIDTH,int WINHEIGHT)
 
 void EndingScene::displayText()
 {
+    QMediaPlayer* mediaPlayer=new QMediaPlayer();
+    mediaPlayer->setMedia(QUrl("qrc:/sounds/button.wav"));
+    mediaPlayer->play();
+    // play button sound;
     text->show();
 }
 
 void EndingScene::displayButton()
 {
+    QMediaPlayer* mediaPlayer=new QMediaPlayer();
+    mediaPlayer->setMedia(QUrl("qrc:/sounds/button.wav"));
+    mediaPlayer->play();
+    // play button sound;
     button->show();
 }
 

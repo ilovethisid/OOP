@@ -10,13 +10,13 @@
 #include <ctime>
 #include <QMediaPlayer>
 
-Window::Window(Map* map,GameTimer* timer) :QGraphicsView(map)
+Window::Window(Map* map,GameTimer* timer) :QGraphicsView()
 {
     // window properties
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setFixedSize(WINWIDTH,WINHEIGHT);
-    this->setWindowTitle("temp title");
+    this->setWindowTitle("S h i n e !");
 
     // place window in center
     this->setGeometry(QStyle::alignedRect(Qt::LeftToRight,Qt::AlignCenter,this->size(),qApp->desktop()->availableGeometry()));
@@ -44,9 +44,14 @@ Window::Window(Map* map,GameTimer* timer) :QGraphicsView(map)
     this->lineLength=0;
     maxLength=10*player->maxspd;
 
+    // interface
+    StartMenu* startMenu=new StartMenu(WINWIDTH,WINHEIGHT);
+
     // game event
     connect(this->map,&Map::gameover,this,&Window::showGameoverInterface);
     connect(this->map,&Map::gameend,this,&Window::gameend);
+    setScene(startMenu);
+    connect(startMenu->button,&QPushButton::pressed,this,&Window::gamestart);
 }
 
 void Window::centerOnPlayer()
@@ -55,10 +60,26 @@ void Window::centerOnPlayer()
     this->centerOn(this->player);
 }
 
+void Window::gamestart()
+{
+    setScene(map);
+    timer->startTimer();
+}
+
 void Window::gameend()
 {
+    std::clock_t start=std::clock();
+    while(std::clock()<start+1000)
+    {
+        // wait for 1 sec
+    }
     player->setBrush(Qt::yellow);
     player->setPen(QPen(Qt::yellow,2));
+    QMediaPlayer* mediaPlayer=new QMediaPlayer();
+    mediaPlayer->setMedia(QUrl("qrc:/sounds/button.wav"));
+    mediaPlayer->play();
+    // play button sound;
+
     EndingScene* endingScene=new EndingScene(WINWIDTH,WINHEIGHT);
     this->setScene(endingScene);
     endingScene->addItem(player);
@@ -68,6 +89,11 @@ void Window::gameend()
 
 void Window::regame()
 {
+    QMediaPlayer* mediaPlayer=new QMediaPlayer();
+    mediaPlayer->setMedia(QUrl("qrc:/sounds/button.wav"));
+    mediaPlayer->play();
+    // play button sound;
+
     // basics
     setScene(map);
     timer->start();
@@ -91,12 +117,10 @@ void Window::mousePressEvent(QMouseEvent* e)
     mouseInitY=e->pos().y();
     mousePressed=true;
 
-    QMediaPlayer* mediaPlayer=new QMediaPlayer();
-    mediaPlayer->setMedia(QUrl("qrc:/sounds/bow-pull.wav"));
     if(player->isAlive && map->checkPlayerBotCollision())
     {
         // if player is on the ground
-        mediaPlayer->play();
+        emit sound_bow_pull();
     }
 }
 
@@ -178,9 +202,7 @@ void Window::mouseReleaseEvent(QMouseEvent* e)
         this->player->xspd=spdX;
         this->player->yspd=spdY;
 
-        QMediaPlayer* mediaPlayer=new QMediaPlayer();
-        mediaPlayer->setMedia(QUrl("qrc:/sounds/bow-release.mp3"));
-        mediaPlayer->play();
+        emit sound_bow_release();
     }
 
     line->hide();
@@ -195,7 +217,6 @@ void Window::showGameoverInterface()
 
     map->gameoverLayer->display(originX,originY,WINWIDTH,WINHEIGHT);
 }
-
 
 
 

@@ -35,6 +35,7 @@ Map::Map(GameTimer* timer)
 
     this->addWidget(gameoverLayer->button);
     connect(gameoverLayer->button,&QPushButton::pressed,this,&Map::respawn);
+    // button
 }
 
 void Map::update()
@@ -60,6 +61,8 @@ void Map::update()
 
 void Map::respawn()
 {
+    emit sound_button();
+
     player->respawn();
     player->setPos(PLAYER_START_X,PLAYER_START_Y);
     this->gameoverLayer->button->hide();
@@ -231,10 +234,7 @@ bool Map::playerSideMove()
 
                 if(abs(player->xspd)>0)
                 {
-                    QMediaPlayer* mediaPlayer=new QMediaPlayer();
-                    mediaPlayer->setMedia(QUrl("qrc:/sounds/drop.wav"));
-                    mediaPlayer->setVolume(100);
-                    mediaPlayer->play();
+                    emit sound_drop();
                 }
                 // play sound
 
@@ -267,10 +267,7 @@ bool Map::playerSideMove()
 
                 if(abs(player->xspd)>0)
                 {
-                    QMediaPlayer* mediaPlayer=new QMediaPlayer();
-                    mediaPlayer->setMedia(QUrl("qrc:/sounds/drop.wav"));
-                    mediaPlayer->setVolume(100);
-                    mediaPlayer->play();
+                    emit sound_drop();
                 }
                 // play sound
 
@@ -318,10 +315,7 @@ bool Map::playerVertMove()
 
                 if(abs(player->yspd)>0)
                 {
-                    QMediaPlayer* mediaPlayer=new QMediaPlayer();
-                    mediaPlayer->setMedia(QUrl("qrc:/sounds/drop.wav"));
-                    mediaPlayer->setVolume(100);
-                    mediaPlayer->play();
+                    emit sound_drop();
                 }
                 // play sound
 
@@ -354,10 +348,7 @@ bool Map::playerVertMove()
 
                 if(abs(player->yspd)>0)
                 {
-                    QMediaPlayer* mediaPlayer=new QMediaPlayer();
-                    mediaPlayer->setMedia(QUrl("qrc:/sounds/drop.wav"));
-                    mediaPlayer->setVolume(100);
-                    mediaPlayer->play();
+                    emit sound_drop();
                 }
                 // play sound
 
@@ -388,15 +379,15 @@ void Map::keyPressEvent(QKeyEvent* e)
 {
     if(e->key()==Qt::Key_W)
     {
-        player->yspd=-20;
+        player->yspd=-15;
     }
     if(e->key()==Qt::Key_A)
     {
-        player->xspd=-10;
+        player->xspd=-5;
     }
     if(e->key()==Qt::Key_D)
     {
-        player->xspd=10;
+        player->xspd=5;
     }
     if(e->key()==Qt::Key_S)
     {

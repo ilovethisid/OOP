@@ -46,6 +46,8 @@ private slots:
 signals:
     void gameover();
     void gameend();
+    void sound_drop();
+    void sound_button();
 };
 
 

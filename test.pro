@@ -14,7 +14,8 @@ SOURCES += \
     Block.cpp \
     Map.cpp \
     GameTimer.cpp \
-    Interface.cpp
+    Interface.cpp \
+    GameSound.cpp
 
 HEADERS += \
     Window.h \
@@ -24,7 +25,11 @@ HEADERS += \
     Map.h \
     MyFunc.h \
     GameTimer.h \
-    Interface.h
+    Interface.h \
+    GameSound.h
 
 RESOURCES += \
     resources.qrc
+
+DISTFILES += \
+    model.qmodel

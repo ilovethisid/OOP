@@ -3,6 +3,9 @@
         <file>bow-pull.wav</file>
         <file>bow-release.mp3</file>
         <file>drop.wav</file>
+        <file>button.wav</file>
+        <file>bgm.mp3</file>
+        <file>splat.wav</file>
     </qresource>
     <qresource prefix="/"/>
 </RCC>

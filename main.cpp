@@ -9,6 +9,7 @@
 #include "block.h"
 #include "Map.h"
 #include "GameTimer.h"
+#include "GameSound.h"
 
 #define FPS 30
 
@@ -26,6 +27,12 @@ int main(int argc, char **argv)
 
     // create a window
     Window* win=new Window(map,timer);
+
+    // create a sound object
+    GameSound* sound=new GameSound(win,map);
+
+    // bgm
+    sound->playbgm();
 
     // add a window
     win->show();
